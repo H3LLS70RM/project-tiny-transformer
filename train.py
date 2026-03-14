@@ -359,8 +359,7 @@ def main():
             
             icl_eval_fn = lambda m=model, t=task, s=stoi, i=itos: quick_icl_eval(m, t, s, i, device=device)
 
-            # ── LR Finder ──────────────────────────────────────────────────
-            # Only run if we're starting fresh (not resuming from a checkpoint)
+            # Find optimal learning rate (only if starting fresh)
             if latest_step == 0:
                 print(f"Running LR finder for {configkey} | {task}...")
                 _tmp_opt = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.1)
@@ -379,7 +378,6 @@ def main():
                 lr = suggested_lr
             else:
                 print(f"Resuming from step {latest_step}, skipping LR finder.")
-            # ───────────────────────────────────────────────────────────────
 
             train(
                 model=model, data_fn=data_fn, steps=steps, batch_size=batch_size,
