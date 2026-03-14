@@ -97,6 +97,53 @@ def evaluate_model(model, dataset, task, batch_size=32, max_len=256, device='cpu
     }
     return results
 
+def save_raw_predictions(model, dataset, task, model_scale, device='cpu', n_samples=20):
+    """Saves raw prompts and model outputs to a JSON file for manual inspection."""
+    stoi, itos = model.stoi, model.itos
+    model.eval()
+    
+    samples = dataset[:n_samples]
+    predictions = []
+    
+    print(f"  Logging {len(samples)} raw predictions for {model_scale}...")
+    
+    with torch.no_grad():
+        for item in samples:
+            prompt_text = item['prompt']
+            expected_answer = item['answer'].strip()
+            
+            p_toks = [stoi.get(c, 0) for c in prompt_text]
+            gen_toks = list(p_toks)
+            
+            # Greedy generation
+            for _ in range(20):
+                out = model(torch.tensor([gen_toks]).to(device))
+                nxt = out[0, -1, :].argmax().item()
+                gen_toks.append(nxt)
+                if nxt == 0: break
+                
+            gen_text = ''.join([itos.get(t, '') for t in gen_toks[len(p_toks):] if t != 0])
+            
+            # Task-specific extraction (same as evaluate_model)
+            match = re.search(r'\d+', gen_text) if task in ('addition', 'mapping') else re.search(r'[A-Z]', gen_text)
+            extracted_answer = (match.group(0) if match else gen_text.strip())
+            
+            predictions.append({
+                "prompt": prompt_text,
+                "expected_answer": expected_answer,
+                "generated_text": gen_text,
+                "extracted_answer": extracted_answer,
+                "is_correct": extracted_answer == expected_answer
+            })
+            
+    save_dir = "results/evaluation/raw_predictions"
+    os.makedirs(save_dir, exist_ok=True)
+    save_path = f"{save_dir}/{task}_{model_scale}.json"
+    
+    with open(save_path, "w") as f:
+        json.dump(predictions, f, indent=2)
+    print(f"  Raw predictions logged to {save_path}")
+
 def calculate_lcs(model, task, n_samples=250, device='cpu'):
     """Calculates Learning-to-Context Slope (LCS)."""
     stoi = model.stoi
@@ -217,6 +264,10 @@ def run_suite(model_scale, task, device='cpu'):
         "induction_score": probe_induction_heads(model, task, device),
         **evaluate_icl_scaling(model, task, device=device)
     }
+
+    # Log raw predictions for manual inspection (using 5-shot samples)
+    logging_ds = SyntheticICLDataset(task=task, n_samples=20, n_context=5).build_dataset(return_answer=True)
+    save_raw_predictions(model, logging_ds, task, model_scale, device=device)
     
     save_path = f"results/evaluation/suite_{task}.json"
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
