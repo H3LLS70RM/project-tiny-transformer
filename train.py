@@ -13,6 +13,7 @@ from src.model.tiny_transformer import TinyTransformer
 from src.configs.model_configs import config
 from src.dataset.synthetic_dataset import SyntheticICLDataset
 from src.utils import set_seed
+from src.lr_finder import LRFinder
 
 # Optional imports for evaluation
 try:
@@ -357,6 +358,28 @@ def main():
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
             
             icl_eval_fn = lambda m=model, t=task, s=stoi, i=itos: quick_icl_eval(m, t, s, i, device=device)
+
+            # ── LR Finder ──────────────────────────────────────────────────
+            # Only run if we're starting fresh (not resuming from a checkpoint)
+            if latest_step == 0:
+                print(f"Running LR finder for {configkey} | {task}...")
+                _tmp_opt = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.1)
+                finder = LRFinder(model, _tmp_opt, device=device)
+                suggested_lr, lr_history = finder.range_test(
+                    data_fn=data_fn,
+                    start_lr=1e-7,
+                    end_lr=1.0,
+                    num_iter=100,
+                    batch_size=batch_size,
+                )
+                # Save the LR finder plot
+                lr_plot_path = f"results/lr_finder/{task}/{configkey}_lr_finder.png"
+                finder.plot(save_path=lr_plot_path, show=False)
+                print(f"LR finder complete. Using lr={suggested_lr:.2e} (config default was {lr:.2e})")
+                lr = suggested_lr
+            else:
+                print(f"Resuming from step {latest_step}, skipping LR finder.")
+            # ───────────────────────────────────────────────────────────────
 
             train(
                 model=model, data_fn=data_fn, steps=steps, batch_size=batch_size,

@@ -2,4 +2,4 @@
 checkpoint*/
 __pycache__/
 *.pyc
-results/
+results*/

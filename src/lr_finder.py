@@ -61,14 +61,18 @@ class LRFinder:
         progress = tqdm(range(num_iter), desc="Finding LR", ncols=100)
         
         for i in progress:
-            # Get data
-            inputs, targets = data_fn(batch_size)
+            # Get data — support 2-tuple (inp, tgt) or 3-tuple (inp, tgt, mask)
+            batch = data_fn(batch_size)
+            if len(batch) == 3:
+                inputs, targets, _ = batch   # mask is unused for LR finder
+            else:
+                inputs, targets = batch
             inputs, targets = inputs.to(self.device), targets.to(self.device)
-            
+
             # Forward
             self.optimizer.zero_grad()
             outputs = self.model(inputs)
-            
+
             # Calculate loss
             # Assuming standard causal LM loss structure: [B, T, V] vs [B, T]
             if self.criterion:
@@ -119,6 +123,19 @@ class LRFinder:
         self.model.load_state_dict(self.model_state)
         self.optimizer.load_state_dict(self.optimizer_state)
         print("Restoration complete.")
+
+        # Suggested LR: point of steepest loss descent (max negative gradient)
+        lrs = self.history["lr"]
+        losses = self.history["loss"]
+        if len(losses) >= 2:
+            gradients = [losses[i+1] - losses[i] for i in range(len(losses)-1)]
+            steepest_idx = gradients.index(min(gradients))
+            suggested_lr = lrs[steepest_idx]
+        else:
+            suggested_lr = lrs[0] if lrs else start_lr
+
+        print(f"Suggested learning rate: {suggested_lr:.2e}")
+        return suggested_lr, self.history
         
     def plot(self, save_path=None, show=True):
         """
