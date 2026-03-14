@@ -1,0 +1,194 @@
+{
+  "decoding": {
+    "tt-26k": {
+      "model_scale": "tt-26k",
+      "parameters": 27200,
+      "eval_loss": 2.4453046321868896,
+      "exact_match_accuracy": 50.0,
+      "token_accuracy": 50.0,
+      "avg_confidence": 0.7013123750220984,
+      "avg_entropy": 20.00713901221752,
+      "avg_edit_distance": 0.5,
+      "total_predictions": 100,
+      "total_exact_matches": 50,
+      "sample_predictions": [
+        {
+          "prompt": "K -> X\nV -> K\nD -> H\nD -> ",
+          "expected": "H",
+          "predicted": "K",
+          "raw_predicted": "K\nD -> K\nD -> K\nD D "
+        },
+        {
+          "prompt": "O -> C\nO -> ",
+          "expected": "C",
+          "predicted": "C",
+          "raw_predicted": "C\nO -> C\nO -> C\nO ->"
+        },
+        {
+          "prompt": "B -> K\nZ -> U\nQ -> L\nZ -> ",
+          "expected": "U",
+          "predicted": "L",
+          "raw_predicted": "L\nZ -> L\nZ -> L\nZ Z "
+        },
+        {
+          "prompt": "C -> P\nX -> Z\nP -> J\nP -> ",
+          "expected": "J",
+          "predicted": "J",
+          "raw_predicted": "J\nP -> J\nP -> J\nP P "
+        }
+      ]
+    },
+    "tt-50k": {
+      "model_scale": "tt-50k",
+      "parameters": 52352,
+      "eval_loss": 2.0478999316692352,
+      "exact_match_accuracy": 46.0,
+      "token_accuracy": 46.0,
+      "avg_confidence": 1.1252845828421414,
+      "avg_entropy": 18.813688650727272,
+      "avg_edit_distance": 0.54,
+      "total_predictions": 100,
+      "total_exact_matches": 46,
+      "sample_predictions": [
+        {
+          "prompt": "O -> J\nB -> X\nW -> O\nL -> G\nH -> F\nH -> ",
+          "expected": "F",
+          "predicted": "G",
+          "raw_predicted": "G\nW -> G\nW -> G\nW ->"
+        },
+        {
+          "prompt": "H -> X\nH -> ",
+          "expected": "X",
+          "predicted": "X",
+          "raw_predicted": "X\nH -> X\nH -> X\nH ->"
+        },
+        {
+          "prompt": "R -> E\nU -> C\nU -> ",
+          "expected": "C",
+          "predicted": "E",
+          "raw_predicted": "E\nU -> E\nU -> E\nU ->"
+        },
+        {
+          "prompt": "R -> E\nI -> T\nO -> N\nE -> C\nR -> ",
+          "expected": "E",
+          "predicted": "E",
+          "raw_predicted": "E\nE -> E\nE -> E\nE ->"
+        }
+      ]
+    },
+    "tt-150k": {
+      "model_scale": "tt-150k",
+      "parameters": 203008,
+      "eval_loss": 1.0147379338741302,
+      "exact_match_accuracy": 72.0,
+      "token_accuracy": 72.0,
+      "avg_confidence": 3.5508933886885643,
+      "avg_entropy": 10.62281721457839,
+      "avg_edit_distance": 0.28,
+      "total_predictions": 100,
+      "total_exact_matches": 72,
+      "sample_predictions": [
+        {
+          "prompt": "D -> E\nM -> X\nU -> T\nR -> S\nU -> ",
+          "expected": "T",
+          "predicted": "X",
+          "raw_predicted": "X\nU -> X\nU -> X\nU ->"
+        },
+        {
+          "prompt": "I -> B\nI -> ",
+          "expected": "B",
+          "predicted": "B",
+          "raw_predicted": "B\nI -> B\nI -> B\nI ->"
+        },
+        {
+          "prompt": "B -> W\nA -> A\nF -> O\nP -> Q\nP -> ",
+          "expected": "Q",
+          "predicted": "Q",
+          "raw_predicted": "Q\nA -> W\nA -> W\nA ->"
+        },
+        {
+          "prompt": "O -> R\nO -> ",
+          "expected": "R",
+          "predicted": "R",
+          "raw_predicted": "R\nO -> R\nO -> R\nO ->"
+        }
+      ]
+    },
+    "tt-800k": {
+      "model_scale": "tt-800k",
+      "parameters": 799232,
+      "eval_loss": 2.2783478498458862,
+      "exact_match_accuracy": 39.0,
+      "token_accuracy": 39.0,
+      "avg_confidence": 1.074917916674167,
+      "avg_entropy": 18.922294840216637,
+      "avg_edit_distance": 0.61,
+      "total_predictions": 100,
+      "total_exact_matches": 39,
+      "sample_predictions": [
+        {
+          "prompt": "Z -> Q\nE -> H\nP -> A\nZ -> ",
+          "expected": "Q",
+          "predicted": "A",
+          "raw_predicted": "A\nE -> A\nP -> A\nP ->"
+        },
+        {
+          "prompt": "H -> M\nE -> Y\nZ -> B\nH -> ",
+          "expected": "M",
+          "predicted": "B",
+          "raw_predicted": "B\nZ -> B\nZ -> B\nZ ->"
+        },
+        {
+          "prompt": "M -> B\nG -> L\nL -> A\nM -> ",
+          "expected": "B",
+          "predicted": "A",
+          "raw_predicted": "A\nM -> A\nM -> A\nM ->"
+        },
+        {
+          "prompt": "X -> P\nX -> ",
+          "expected": "P",
+          "predicted": "P",
+          "raw_predicted": "P\nX -> P\nX -> P\nX ->"
+        }
+      ]
+    },
+    "tt-3000k": {
+      "model_scale": "tt-3000k",
+      "parameters": 3171328,
+      "eval_loss": 2.0190129578113556,
+      "exact_match_accuracy": 50.0,
+      "token_accuracy": 50.0,
+      "avg_confidence": 1.395656468346715,
+      "avg_entropy": 18.00998119264841,
+      "avg_edit_distance": 0.5,
+      "total_predictions": 100,
+      "total_exact_matches": 50,
+      "sample_predictions": [
+        {
+          "prompt": "H -> N\nM -> U\nI -> L\nE -> M\nH -> ",
+          "expected": "N",
+          "predicted": "U",
+          "raw_predicted": "U\nM -> U\nE -> U\nE ->"
+        },
+        {
+          "prompt": "A -> Q\nK -> C\nJ -> D\nI -> E\nO -> V\nI -> ",
+          "expected": "E",
+          "predicted": "E",
+          "raw_predicted": "E\nI -> E\nI -> E\nI ->"
+        },
+        {
+          "prompt": "V -> M\nJ -> L\nH -> Z\nW -> S\nX -> A\nV -> ",
+          "expected": "M",
+          "predicted": "M",
+          "raw_predicted": "M\nX -> L\nX -> Z\nX ->"
+        },
+        {
+          "prompt": "U -> T\nH -> I\nU -> ",
+          "expected": "T",
+          "predicted": "I",
+          "raw_predicted": "I\nU -> I\nU -> I\nU ->"
+        }
+      ]
+    }
+  }
+}

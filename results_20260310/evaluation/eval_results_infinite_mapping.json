@@ -1,0 +1,308 @@
+{
+  "mapping": {
+    "tt-1k": {
+      "model_scale": "tt-1k",
+      "parameters": 1096,
+      "eval_loss": 2.3171911239624023,
+      "exact_match_accuracy": 0.0,
+      "token_accuracy": 8.333333333333332,
+      "avg_confidence": 0.721582205966115,
+      "avg_entropy": 15.058142393827438,
+      "avg_edit_distance": 2.75,
+      "total_predictions": 100,
+      "total_exact_matches": 0,
+      "sample_predictions": [
+        {
+          "prompt": "4 -> 524\n4 -> 524\n10 -> 548\n8 -> 540\n10 -> ",
+          "expected": "548",
+          "predicted": "100",
+          "raw_predicted": "100\n10 -> 100\n10 -> "
+        },
+        {
+          "prompt": "1 -> 916\n1 -> 916\n8 -> ",
+          "expected": "958",
+          "predicted": "100",
+          "raw_predicted": "100\n10 -> 100\n10 -> "
+        },
+        {
+          "prompt": "10 -> 685\n5 -> 680\n8 -> 683\n3 -> 678\n2 -> ",
+          "expected": "677",
+          "predicted": "100",
+          "raw_predicted": "100\n10 -> 100\n10 -> "
+        },
+        {
+          "prompt": "9 -> 163\n1 -> 131\n7 -> 155\n10 -> 167\n3 -> 139\n1 -> ",
+          "expected": "131",
+          "predicted": "100",
+          "raw_predicted": "100\n10 -> 10 10 10 1"
+        }
+      ]
+    },
+    "tt-8k": {
+      "model_scale": "tt-8k",
+      "parameters": 6944,
+      "eval_loss": 1.7724353671073914,
+      "exact_match_accuracy": 1.0,
+      "token_accuracy": 36.666666666666664,
+      "avg_confidence": 1.995408495888114,
+      "avg_entropy": 12.214899480342865,
+      "avg_edit_distance": 1.89,
+      "total_predictions": 100,
+      "total_exact_matches": 1,
+      "sample_predictions": [
+        {
+          "prompt": "1 -> 608\n5 -> 632\n6 -> 638\n1 -> 608\n6 -> ",
+          "expected": "638",
+          "predicted": "634",
+          "raw_predicted": "634\n1 -> 634\n1 -0-> "
+        },
+        {
+          "prompt": "4 -> 352\n8 -> 372\n6 -> 362\n2 -> 342\n3 -> ",
+          "expected": "347",
+          "predicted": "333",
+          "raw_predicted": "333\n1 -> 333\n1 -> 33"
+        },
+        {
+          "prompt": "9 -> 907\n5 -> 903\n4 -> 902\n8 -> ",
+          "expected": "906",
+          "predicted": "938",
+          "raw_predicted": "938\n1 -> 938\n1 -> 93"
+        },
+        {
+          "prompt": "8 -> 977\n9 -> 978\n4 -> 973\n6 -> ",
+          "expected": "975",
+          "predicted": "938",
+          "raw_predicted": "938\n1 -> 938\n1 -> 93"
+        }
+      ]
+    },
+    "tt-14k": {
+      "model_scale": "tt-14k",
+      "parameters": 13600,
+      "eval_loss": 1.9051323533058167,
+      "exact_match_accuracy": 0.0,
+      "token_accuracy": 33.6734693877551,
+      "avg_confidence": 1.977413774933666,
+      "avg_entropy": 12.312574230134487,
+      "avg_edit_distance": 1.95,
+      "total_predictions": 100,
+      "total_exact_matches": 0,
+      "sample_predictions": [
+        {
+          "prompt": "6 -> 501\n9 -> 528\n8 -> 519\n3 -> 474\n5 -> 492\n6 -> ",
+          "expected": "501",
+          "predicted": "470",
+          "raw_predicted": "470\n10 -> -> 100\n10 "
+        },
+        {
+          "prompt": "3 -> 397\n8 -> 422\n3 -> 397\n8 -> 422\n8 -> 422\n5 -> ",
+          "expected": "407",
+          "predicted": "470",
+          "raw_predicted": "470\n10 -> -> 100\n10 "
+        },
+        {
+          "prompt": "10 -> 275\n2 -> 219\n4 -> 233\n7 -> 254\n8 -> 261\n1 -> ",
+          "expected": "212",
+          "predicted": "260",
+          "raw_predicted": "260\n10 -> -> 100\n10 "
+        },
+        {
+          "prompt": "3 -> 898\n7 -> 906\n3 -> 898\n5 -> 902\n2 -> 896\n5 -> ",
+          "expected": "902",
+          "predicted": "800",
+          "raw_predicted": "800\n10 -> -> 100\n10 "
+        }
+      ]
+    },
+    "tt-26k": {
+      "model_scale": "tt-26k",
+      "parameters": 26176,
+      "eval_loss": 0.9642140716314316,
+      "exact_match_accuracy": 21.0,
+      "token_accuracy": 62.16216216216216,
+      "avg_confidence": 3.5629163309931755,
+      "avg_entropy": 8.19022100418806,
+      "avg_edit_distance": 1.12,
+      "total_predictions": 100,
+      "total_exact_matches": 21,
+      "sample_predictions": [
+        {
+          "prompt": "10 -> 182\n7 -> 176\n9 -> 180\n8 -> ",
+          "expected": "178",
+          "predicted": "176",
+          "raw_predicted": "176\n10 -> 182\n10 -> "
+        },
+        {
+          "prompt": "1 -> 757\n9 -> 805\n5 -> ",
+          "expected": "781",
+          "predicted": "795",
+          "raw_predicted": "795\n10 -> 805\n10 -> "
+        },
+        {
+          "prompt": "8 -> 602\n3 -> 582\n1 -> 574\n7 -> ",
+          "expected": "598",
+          "predicted": "602",
+          "raw_predicted": "602\n10 -> 612\n10 -> "
+        },
+        {
+          "prompt": "3 -> 531\n1 -> 511\n9 -> 591\n8 -> 581\n1 -> ",
+          "expected": "511",
+          "predicted": "511",
+          "raw_predicted": "511\n10 -> 591\n10 -> "
+        }
+      ]
+    },
+    "tt-50k": {
+      "model_scale": "tt-50k",
+      "parameters": 51328,
+      "eval_loss": 0.856985330581665,
+      "exact_match_accuracy": 23.0,
+      "token_accuracy": 66.88963210702342,
+      "avg_confidence": 3.9096352104097605,
+      "avg_entropy": 7.317503748461604,
+      "avg_edit_distance": 0.99,
+      "total_predictions": 100,
+      "total_exact_matches": 23,
+      "sample_predictions": [
+        {
+          "prompt": "5 -> 712\n1 -> 676\n2 -> 685\n9 -> ",
+          "expected": "748",
+          "predicted": "733",
+          "raw_predicted": "733\n1 -> 676\n1 -> 67"
+        },
+        {
+          "prompt": "5 -> 966\n5 -> 966\n1 -> ",
+          "expected": "942",
+          "predicted": "946",
+          "raw_predicted": "946\n1 -> 946\n1 -> 94"
+        },
+        {
+          "prompt": "5 -> 581\n7 -> 597\n9 -> 613\n2 -> 557\n9 -> 613\n7 -> ",
+          "expected": "597",
+          "predicted": "599",
+          "raw_predicted": "599\n1 -> 555\n1 -> 55"
+        },
+        {
+          "prompt": "9 -> 580\n8 -> 578\n5 -> 572\n3 -> 568\n4 -> 570\n6 -> ",
+          "expected": "574",
+          "predicted": "576",
+          "raw_predicted": "576\n1 -> 556\n1 -> 55"
+        }
+      ]
+    },
+    "tt-150k": {
+      "model_scale": "tt-150k",
+      "parameters": 200960,
+      "eval_loss": 0.6406505703926086,
+      "exact_match_accuracy": 50.0,
+      "token_accuracy": 78.64406779661017,
+      "avg_confidence": 4.59666096046567,
+      "avg_entropy": 5.4717845395207405,
+      "avg_edit_distance": 0.63,
+      "total_predictions": 100,
+      "total_exact_matches": 50,
+      "sample_predictions": [
+        {
+          "prompt": "1 -> 835\n8 -> 898\n2 -> 844\n10 -> 916\n7 -> ",
+          "expected": "889",
+          "predicted": "894",
+          "raw_predicted": "894\n10 -> 916\n10 -> "
+        },
+        {
+          "prompt": "5 -> 1033\n8 -> 1063\n8 -> 1063\n10 -> 1083\n5 -> ",
+          "expected": "1033",
+          "predicted": "1033",
+          "raw_predicted": "1033\n10 -> 1083\n1 ->"
+        },
+        {
+          "prompt": "9 -> 942\n9 -> 942\n6 -> 915\n2 -> 879\n4 -> ",
+          "expected": "897",
+          "predicted": "897",
+          "raw_predicted": "897\n10 -> 953\n10 -> "
+        },
+        {
+          "prompt": "8 -> 707\n6 -> 699\n7 -> ",
+          "expected": "703",
+          "predicted": "693",
+          "raw_predicted": "693\n1 -> 649\n1 -> 64"
+        }
+      ]
+    },
+    "tt-800k": {
+      "model_scale": "tt-800k",
+      "parameters": 795136,
+      "eval_loss": 0.28243201971054077,
+      "exact_match_accuracy": 78.0,
+      "token_accuracy": 91.83673469387756,
+      "avg_confidence": 5.290580283850431,
+      "avg_entropy": 3.715766469016671,
+      "avg_edit_distance": 0.24,
+      "total_predictions": 100,
+      "total_exact_matches": 78,
+      "sample_predictions": [
+        {
+          "prompt": "9 -> 882\n3 -> 828\n9 -> 882\n10 -> 891\n1 -> 810\n3 -> ",
+          "expected": "828",
+          "predicted": "828",
+          "raw_predicted": "828\n10 -> 891\n10 -> "
+        },
+        {
+          "prompt": "5 -> 604\n8 -> 622\n5 -> ",
+          "expected": "604",
+          "predicted": "604",
+          "raw_predicted": "604\n10 -> 628\n10 -> "
+        },
+        {
+          "prompt": "9 -> 1046\n1 -> 982\n6 -> 1022\n9 -> 1046\n8 -> 1038\n8 -> ",
+          "expected": "1038",
+          "predicted": "1038",
+          "raw_predicted": "1038\n10 -> 1054\n10 -"
+        },
+        {
+          "prompt": "10 -> 578\n4 -> 554\n6 -> 562\n10 -> 578\n2 -> ",
+          "expected": "546",
+          "predicted": "550",
+          "raw_predicted": "550\n10 -> 578\n10 -> "
+        }
+      ]
+    },
+    "tt-3000k": {
+      "model_scale": "tt-3000k",
+      "parameters": 3163136,
+      "eval_loss": 0.20800775289535522,
+      "exact_match_accuracy": 85.0,
+      "token_accuracy": 94.17808219178082,
+      "avg_confidence": 5.368464730679989,
+      "avg_entropy": 3.4064894933253527,
+      "avg_edit_distance": 0.17,
+      "total_predictions": 100,
+      "total_exact_matches": 85,
+      "sample_predictions": [
+        {
+          "prompt": "1 -> 187\n1 -> 187\n2 -> 189\n6 -> ",
+          "expected": "197",
+          "predicted": "207",
+          "raw_predicted": "207\n1 -> 187\n1 -> 18"
+        },
+        {
+          "prompt": "5 -> 881\n3 -> 877\n3 -> ",
+          "expected": "877",
+          "predicted": "877",
+          "raw_predicted": "877\n10 -> 896\n1 -> 8"
+        },
+        {
+          "prompt": "10 -> 845\n6 -> 833\n5 -> 830\n8 -> 839\n10 -> ",
+          "expected": "845",
+          "predicted": "845",
+          "raw_predicted": "845\n10 -> 845\n1 -> 8"
+        },
+        {
+          "prompt": "8 -> 424\n10 -> 426\n6 -> 422\n2 -> ",
+          "expected": "418",
+          "predicted": "418",
+          "raw_predicted": "418\n10 -> 426\n10 -> "
+        }
+      ]
+    }
+  }
+}

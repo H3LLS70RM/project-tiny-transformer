@@ -1,0 +1,920 @@
+{
+  "addition": {
+    "tt-1k": {
+      "0": {
+        "accuracy": 0.0,
+        "loss": 2.216663360595703,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 0.0,
+        "loss": 2.225024938583374,
+        "correct": 0,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 0.0,
+        "loss": 2.179062783718109,
+        "correct": 0,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 0.0,
+        "loss": 2.173923075199127,
+        "correct": 0,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 0.0,
+        "loss": 2.1813257932662964,
+        "correct": 0,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 0.0,
+        "loss": 2.2008835673332214,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-8k": {
+      "0": {
+        "accuracy": 6.0,
+        "loss": 1.0957781374454498,
+        "correct": 6,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 12.0,
+        "loss": 1.1185378432273865,
+        "correct": 12,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 8.0,
+        "loss": 1.261305958032608,
+        "correct": 8,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 13.0,
+        "loss": 1.136600524187088,
+        "correct": 13,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 12.0,
+        "loss": 1.0882511883974075,
+        "correct": 12,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 10.0,
+        "loss": 1.1213447749614716,
+        "correct": 10,
+        "total": 100
+      }
+    },
+    "tt-14k": {
+      "0": {
+        "accuracy": 0.0,
+        "loss": 2.1692248582839966,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 0.0,
+        "loss": 2.2049463987350464,
+        "correct": 0,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 0.0,
+        "loss": 2.2204909920692444,
+        "correct": 0,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 0.0,
+        "loss": 2.1834484934806824,
+        "correct": 0,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 0.0,
+        "loss": 2.2548927664756775,
+        "correct": 0,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 0.0,
+        "loss": 2.24288809299469,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-26k": {
+      "0": {
+        "accuracy": 54.0,
+        "loss": 0.6427123546600342,
+        "correct": 54,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 57.99999999999999,
+        "loss": 0.5073774233460426,
+        "correct": 58,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 52.0,
+        "loss": 0.5037059858441353,
+        "correct": 52,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 67.0,
+        "loss": 0.32039394974708557,
+        "correct": 67,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 62.0,
+        "loss": 0.33985369093716145,
+        "correct": 62,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 67.0,
+        "loss": 0.417864128947258,
+        "correct": 67,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 85.0,
+        "loss": 0.23805716820061207,
+        "correct": 85,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 92.0,
+        "loss": 0.13798475731164217,
+        "correct": 92,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 92.0,
+        "loss": 0.1358695775270462,
+        "correct": 92,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 94.0,
+        "loss": 0.12487941142171621,
+        "correct": 94,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 91.0,
+        "loss": 0.14585728012025356,
+        "correct": 91,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 94.0,
+        "loss": 0.14079444110393524,
+        "correct": 94,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 71.0,
+        "loss": 0.571966677904129,
+        "correct": 71,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "loss": 0.06188337877392769,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "loss": 0.061960019171237946,
+        "correct": 100,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 100.0,
+        "loss": 0.06208072602748871,
+        "correct": 100,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 100.0,
+        "loss": 0.06187780015170574,
+        "correct": 100,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 98.0,
+        "loss": 0.06284210924059153,
+        "correct": 98,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 99.0,
+        "loss": 0.07853682711720467,
+        "correct": 99,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "loss": 0.06711294502019882,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "loss": 0.06840866059064865,
+        "correct": 100,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 100.0,
+        "loss": 0.06838228926062584,
+        "correct": 100,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 100.0,
+        "loss": 0.06787346303462982,
+        "correct": 100,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 100.0,
+        "loss": 0.06796467490494251,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 100.0,
+        "loss": 0.06171632092446089,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "loss": 0.06205923669040203,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "loss": 0.06242111325263977,
+        "correct": 100,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 100.0,
+        "loss": 0.06231352314352989,
+        "correct": 100,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 100.0,
+        "loss": 0.06228032335639,
+        "correct": 100,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 100.0,
+        "loss": 0.06221696548163891,
+        "correct": 100,
+        "total": 100
+      }
+    }
+  },
+  "mapping": {
+    "tt-1k": {
+      "0": {
+        "accuracy": 0.0,
+        "loss": 2.32943993806839,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 0.0,
+        "loss": 2.307522714138031,
+        "correct": 0,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 0.0,
+        "loss": 2.3126840591430664,
+        "correct": 0,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 0.0,
+        "loss": 2.3226742148399353,
+        "correct": 0,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 0.0,
+        "loss": 2.3198896050453186,
+        "correct": 0,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 0.0,
+        "loss": 2.3234118223190308,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-8k": {
+      "0": {
+        "accuracy": 0.0,
+        "loss": 2.3580833673477173,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 2.0,
+        "loss": 1.8893502354621887,
+        "correct": 2,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 2.0,
+        "loss": 1.7380424439907074,
+        "correct": 2,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 1.0,
+        "loss": 1.7930131256580353,
+        "correct": 1,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 3.0,
+        "loss": 1.882502168416977,
+        "correct": 3,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 0.0,
+        "loss": 1.820404201745987,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-14k": {
+      "0": {
+        "accuracy": 0.0,
+        "loss": 2.316174864768982,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 2.0,
+        "loss": 1.80227530002594,
+        "correct": 2,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 2.0,
+        "loss": 1.8210062086582184,
+        "correct": 2,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 0.0,
+        "loss": 1.9383845925331116,
+        "correct": 0,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 1.0,
+        "loss": 1.7989413440227509,
+        "correct": 1,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 1.0,
+        "loss": 1.8520990908145905,
+        "correct": 1,
+        "total": 100
+      }
+    },
+    "tt-26k": {
+      "0": {
+        "accuracy": 1.0,
+        "loss": 3.0677563548088074,
+        "correct": 1,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 15.0,
+        "loss": 1.2251280546188354,
+        "correct": 15,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 20.0,
+        "loss": 1.095096305012703,
+        "correct": 20,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 23.0,
+        "loss": 0.995820939540863,
+        "correct": 23,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 26.0,
+        "loss": 0.947666808962822,
+        "correct": 26,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 21.0,
+        "loss": 0.936520591378212,
+        "correct": 21,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 0.0,
+        "loss": 2.3240509033203125,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 11.0,
+        "loss": 1.3278932571411133,
+        "correct": 11,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 20.0,
+        "loss": 1.0408588200807571,
+        "correct": 20,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 23.0,
+        "loss": 0.9075449109077454,
+        "correct": 23,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 28.999999999999996,
+        "loss": 0.7671206593513489,
+        "correct": 29,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 27.0,
+        "loss": 0.8652603328227997,
+        "correct": 27,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 0.0,
+        "loss": 2.6059412360191345,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 15.0,
+        "loss": 1.0579803884029388,
+        "correct": 15,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 33.0,
+        "loss": 0.8702110350131989,
+        "correct": 33,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 47.0,
+        "loss": 0.5632954090833664,
+        "correct": 47,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 63.0,
+        "loss": 0.43389011919498444,
+        "correct": 63,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 65.0,
+        "loss": 0.4573461040854454,
+        "correct": 65,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 1.0,
+        "loss": 2.321216583251953,
+        "correct": 1,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 14.000000000000002,
+        "loss": 0.9699612706899643,
+        "correct": 14,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 48.0,
+        "loss": 0.6207693219184875,
+        "correct": 48,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 63.0,
+        "loss": 0.45871538668870926,
+        "correct": 63,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 74.0,
+        "loss": 0.26668473333120346,
+        "correct": 74,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 81.0,
+        "loss": 0.2558502145111561,
+        "correct": 81,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 0.0,
+        "loss": 2.321690261363983,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 15.0,
+        "loss": 1.066544458270073,
+        "correct": 15,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 56.00000000000001,
+        "loss": 0.4465146139264107,
+        "correct": 56,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 71.0,
+        "loss": 0.2973484992980957,
+        "correct": 71,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 86.0,
+        "loss": 0.16412770003080368,
+        "correct": 86,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 89.0,
+        "loss": 0.161289531737566,
+        "correct": 89,
+        "total": 100
+      }
+    }
+  },
+  "pattern": {
+    "tt-1k": {
+      "0": {
+        "accuracy": 9.0,
+        "loss": 3.181717276573181,
+        "correct": 9,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 19.0,
+        "loss": 3.0880483984947205,
+        "correct": 19,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 15.0,
+        "loss": 3.125306725502014,
+        "correct": 15,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 6.0,
+        "loss": 3.198850989341736,
+        "correct": 6,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 9.0,
+        "loss": 3.2263723015785217,
+        "correct": 9,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 10.0,
+        "loss": 3.211302697658539,
+        "correct": 10,
+        "total": 100
+      }
+    },
+    "tt-8k": {
+      "0": {
+        "accuracy": 95.0,
+        "loss": 0.27791427820920944,
+        "correct": 95,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 93.0,
+        "loss": 0.4586646035313606,
+        "correct": 93,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 90.0,
+        "loss": 0.42906304448843,
+        "correct": 90,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 92.0,
+        "loss": 0.3933442533016205,
+        "correct": 92,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 96.0,
+        "loss": 0.2522224485874176,
+        "correct": 96,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 95.0,
+        "loss": 0.39395763725042343,
+        "correct": 95,
+        "total": 100
+      }
+    },
+    "tt-14k": {
+      "0": {
+        "accuracy": 67.0,
+        "loss": 0.7529736310243607,
+        "correct": 67,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 66.0,
+        "loss": 0.8962709903717041,
+        "correct": 66,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 68.0,
+        "loss": 0.8443105667829514,
+        "correct": 68,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 62.0,
+        "loss": 0.9709347635507584,
+        "correct": 62,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 73.0,
+        "loss": 0.9281409084796906,
+        "correct": 73,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 65.0,
+        "loss": 0.7595585137605667,
+        "correct": 65,
+        "total": 100
+      }
+    },
+    "tt-26k": {
+      "0": {
+        "accuracy": 51.0,
+        "loss": 1.2876321971416473,
+        "correct": 51,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 49.0,
+        "loss": 1.3242689967155457,
+        "correct": 49,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 45.0,
+        "loss": 1.5052345395088196,
+        "correct": 45,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 51.0,
+        "loss": 1.3695766627788544,
+        "correct": 51,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 47.0,
+        "loss": 1.4650231301784515,
+        "correct": 47,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 45.0,
+        "loss": 1.3867988884449005,
+        "correct": 45,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 100.0,
+        "loss": 0.06951670348644257,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "loss": 0.06949896365404129,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "loss": 0.07035396434366703,
+        "correct": 100,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 100.0,
+        "loss": 0.0698944553732872,
+        "correct": 100,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 100.0,
+        "loss": 0.06992357037961483,
+        "correct": 100,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 100.0,
+        "loss": 0.07002603821456432,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 100.0,
+        "loss": 0.0739358402788639,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "loss": 0.07406440190970898,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "loss": 0.07390286959707737,
+        "correct": 100,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 100.0,
+        "loss": 0.07404489442706108,
+        "correct": 100,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 100.0,
+        "loss": 0.07401708513498306,
+        "correct": 100,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 100.0,
+        "loss": 0.07355729304254055,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 100.0,
+        "loss": 0.07262229360640049,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "loss": 0.07206860184669495,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "loss": 0.0723334550857544,
+        "correct": 100,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 100.0,
+        "loss": 0.07208656147122383,
+        "correct": 100,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 100.0,
+        "loss": 0.07221421040594578,
+        "correct": 100,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 100.0,
+        "loss": 0.07240105979144573,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 100.0,
+        "loss": 0.07038780860602856,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "loss": 0.0702135730534792,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "loss": 0.0704010259360075,
+        "correct": 100,
+        "total": 100
+      },
+      "3": {
+        "accuracy": 100.0,
+        "loss": 0.07026699371635914,
+        "correct": 100,
+        "total": 100
+      },
+      "4": {
+        "accuracy": 100.0,
+        "loss": 0.07015923038125038,
+        "correct": 100,
+        "total": 100
+      },
+      "5": {
+        "accuracy": 100.0,
+        "loss": 0.07015317492187023,
+        "correct": 100,
+        "total": 100
+      }
+    }
+  }
+}

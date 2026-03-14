@@ -1,0 +1,308 @@
+{
+  "pattern": {
+    "tt-1k": {
+      "model_scale": "tt-1k",
+      "parameters": 1352,
+      "eval_loss": 3.200399875640869,
+      "exact_match_accuracy": 8.0,
+      "token_accuracy": 8.0,
+      "avg_confidence": 0.33699086122214794,
+      "avg_entropy": 20.5855919867754,
+      "avg_edit_distance": 0.92,
+      "total_predictions": 100,
+      "total_exact_matches": 8,
+      "sample_predictions": [
+        {
+          "prompt": "ZQHVOTZQHVOTZQHVOTZQHVOTZQHVOTZQHVOTZQHV -> O\nNMDUJBZNMDUJBZNMDUJBZNMDUJBZNMDUJBZNM -> D\nWQBTZWQBTZWQBTZWQBTZWQBTZWQBTZW -> Q\nGEEBWZFGEEBWZFGEEBWZFGEE -> B\nLTIIOFMLTIIOFMLTIIOFMLTIIOFMLTIIOFMLTI -> I\nWTAFFWTAFFWTAFFWTAFFWTAFFWTAFFWTAFFW -> ",
+          "expected": "T",
+          "predicted": "E",
+          "raw_predicted": "E\nPGUB\nUIUGKGUBG"
+        },
+        {
+          "prompt": "ZEYHEZEYHEZEYHEZEYHEZ -> E\nQTMXBRAXQTMXBRAXQTMXBRAXQTMXBRAXQ -> ",
+          "expected": "T",
+          "predicted": "E",
+          "raw_predicted": "E\nREUEGDDBREREPEMDMD"
+        },
+        {
+          "prompt": "GXUBNVGXUBNVGXUBNVGXUBNVGXUBNVGXUB -> N\nCULGZGZQCULGZGZQCULGZGZQCULGZGZQCULGZ -> G\nVEVGWXOIVEVGWXOIVEVGWXOIVEVGWXO -> I\nWNNSVPPWBWNNSVPPWBWNNSVPPWBWNNSVPPWB -> ",
+          "expected": "W",
+          "predicted": "B",
+          "raw_predicted": "B\nPGUBIHAGPBPBPBBBBH"
+        },
+        {
+          "prompt": "TAYQRTAYQRTAYQRTAYQRTAYQRTAYQRTAYQ -> R\nGFQXULOGFQXULOGFQXULOGFQXULOGFQXULOGFQX -> U\nDCMBVUFNLPDCMBVUFNLPDCMB -> V\nWGSAEWGSAEWGSAEWGSAEWGS -> A\nFQNKSDEFQNKSDEFQNKSDE -> F\nZIOIQQTBGZIOIQQTBGZIOIQQTBGZIOIQQ -> ",
+          "expected": "T",
+          "predicted": "G",
+          "raw_predicted": "G\nDGUMUFUFUMFHDIUFQR"
+        }
+      ]
+    },
+    "tt-8k": {
+      "model_scale": "tt-8k",
+      "parameters": 7456,
+      "eval_loss": 0.3839382603764534,
+      "exact_match_accuracy": 90.0,
+      "token_accuracy": 90.0,
+      "avg_confidence": 5.265011903829873,
+      "avg_entropy": 5.229342062026262,
+      "avg_edit_distance": 0.1,
+      "total_predictions": 100,
+      "total_exact_matches": 90,
+      "sample_predictions": [
+        {
+          "prompt": "SCNDQSCNDQSCNDQSCNDQSCNDQSCNDQSCNDQSCN -> D\nYYIZTAYYIZTAYYIZTAYYIZTAYYIZT -> A\nRNDJHUMURNDJHUMURNDJHUMURNDJH -> U\nFDLMBNFDLMBNFDLMBNFDLMBNFDLMB -> ",
+          "expected": "N",
+          "predicted": "N",
+          "raw_predicted": "N\nIBFGBIBFGBFGBIBFGB"
+        },
+        {
+          "prompt": "NJQNUMLNJQNUMLNJQNUMLNJQNUMLNJQNUMLNJ -> Q\nQEYOWCAQEYOWCAQEYOWCAQEYO -> W\nYOFIWJTKYYOFIWJTKYYOFIWJTKYYOFIWJT -> ",
+          "expected": "K",
+          "predicted": "K",
+          "raw_predicted": "K\nTFIWJTFIWJTFIWJTFI"
+        },
+        {
+          "prompt": "TCHYYUJJTCHYYUJJTCHYYUJJTCHYYUJJTCHYYU -> J\nSGULDNVQSGULDNVQSGULDNVQSGULDNVQ -> ",
+          "expected": "S",
+          "predicted": "S",
+          "raw_predicted": "S\nIIDNIIIIIDNIIIIIII"
+        },
+        {
+          "prompt": "UVPLWUVPLWUVPLWUVPLWUVPLWUVPLWUVPLWU -> V\nTJWFERNBTJTJWFERNBTJTJWFERNB -> T\nZTVFDZTVFDZTVFDZTVFDZTVFDZTVFDZTVFDZ -> ",
+          "expected": "T",
+          "predicted": "T",
+          "raw_predicted": "T\nLDZTRLDZTRLDZTRLDZ"
+        }
+      ]
+    },
+    "tt-14k": {
+      "model_scale": "tt-14k",
+      "parameters": 14624,
+      "eval_loss": 0.7619941532611847,
+      "exact_match_accuracy": 67.0,
+      "token_accuracy": 67.0,
+      "avg_confidence": 3.825732375495136,
+      "avg_entropy": 8.271309508942068,
+      "avg_edit_distance": 0.33,
+      "total_predictions": 100,
+      "total_exact_matches": 67,
+      "sample_predictions": [
+        {
+          "prompt": "WZWMVJPXCRWZWMVJPXCRWZWMVJPXCRWZWMVJP -> X\nEKKUJRTEKKUJRTEKKUJRTEKKUJRTE -> K\nPNDSOMRPNDSOMRPNDSOMRPNDSOMRPNDSO -> ",
+          "expected": "M",
+          "predicted": "D",
+          "raw_predicted": "D\nDOMOUHDODODOUHDODO"
+        },
+        {
+          "prompt": "LCPVULCPVULCPVULCPVULCPV -> U\nPPEKGBRPPEKGBRPPEKGBRPPEKGBRP -> P\nDGSVYNVRDGSVYNVRDGSVYNVRDGSVYNVRDGSVYN -> V\nAZECBWTAZECBWTAZECBWTAZECBWTAZECBWTAZEC -> B\nZXRWJDXPZXRWJDXPZXRWJDXPZXRWJ -> D\nKIBFFHOGKIBFFHOGKIBFFHOGKIBFFHO -> ",
+          "expected": "G",
+          "predicted": "G",
+          "raw_predicted": "G\nBUOMHUBGBOUHMUBGBG"
+        },
+        {
+          "prompt": "UGIGQUGIGQUGIGQUGIGQUGI -> G\nJORMVEGEOJORMVEGEOJORMVEGEOJORMVEGEOJORM -> V\nFGMQOCFGMQOCFGMQOCFGMQOCFGMQOCFGMQOCFG -> M\nXXEOMRIHXXXEOMRIHXXXE -> ",
+          "expected": "O",
+          "predicted": "E",
+          "raw_predicted": "E\nXUXEMEXEXUXEEEEEXU"
+        },
+        {
+          "prompt": "MAPWZUZZGPMAPWZUZZGPMAPWZUZZ -> G\nWOSOLWOSOLWOSOLWOSOLWOSO -> L\nRWCUQRWCUQRWCUQRWCUQRWCUQRWCUQRW -> C\nUQSFDXSCUTUQSFDXSCUTUQ -> S\nANJREGCZJNANJREGCZJNANJREGC -> ",
+          "expected": "Z",
+          "predicted": "Z",
+          "raw_predicted": "Z\nSUBCDMZSUBDCBZSMUD"
+        }
+      ]
+    },
+    "tt-26k": {
+      "model_scale": "tt-26k",
+      "parameters": 27200,
+      "eval_loss": 1.5151921510696411,
+      "exact_match_accuracy": 50.0,
+      "token_accuracy": 50.0,
+      "avg_confidence": 3.0105576450005174,
+      "avg_entropy": 12.042984779924154,
+      "avg_edit_distance": 0.5,
+      "total_predictions": 100,
+      "total_exact_matches": 50,
+      "sample_predictions": [
+        {
+          "prompt": "ZOGFGZOGFGZOGFGZOGFGZOG -> F\nXVVGAXVVGAXVVGAXVVGAXV -> V\nAZKMUJSHFAZKMUJSHFAZKMUJSHFAZKM -> U\nLRDWJKLRDWJKLRDWJKLRDWJKLRD -> ",
+          "expected": "W",
+          "predicted": "W",
+          "raw_predicted": "W\nOYDYOOYDYOYDYOOYDY"
+        },
+        {
+          "prompt": "AAKPPDHHZIAAKPPDHHZIAAKPPDHHZIAA -> K\nGBLOJVSGBLOJVSGBLOJVSGBLOJVSGBLOJVSGBLOJ -> V\nXKJMJUOLXKJMJUOLXKJMJUOLX -> K\nUMAVLMLUMAVLMLUMAVLMLUMAVLMLUMAVLMLUM -> A\nZDIAZGNZDIAZGNZDIAZGNZDIAZGNZDIA -> Z\nUFVRRVUFVRRVUFVRRVUFVRRVUFVRRVUF -> ",
+          "expected": "V",
+          "predicted": "V",
+          "raw_predicted": "V\nOKKKKOKKKKKKKKKKKK"
+        },
+        {
+          "prompt": "NWRBMBENWRBMBENWRBMBENWRBMBENWRBM -> B\nGWJVZEGWJVZEGWJVZEGWJVZEGWJ -> V\nLOIZMWGLOIZMWGLOIZMWG -> L\nTKCFJSAUTCTKCFJSAUTC -> T\nUTWTHDHUTWTHDHUTWTHDHUTWTHDHUTWTHDH -> U\nSIYKKSIYKKSIYKKSIYKKSIYKKSIYKKSIYK -> ",
+          "expected": "K",
+          "predicted": "K",
+          "raw_predicted": "K\nYKZYKYKZYKYKZYKYKZ"
+        },
+        {
+          "prompt": "IPDXGDAIIPDXGDAIIPDXGDAIIPD -> X\nMBRPUGMBRPUGMBRPUGMBRPUGMBRPUG -> ",
+          "expected": "M",
+          "predicted": "R",
+          "raw_predicted": "R\nHYYHHYYHYYHYYHYYHY"
+        }
+      ]
+    },
+    "tt-50k": {
+      "model_scale": "tt-50k",
+      "parameters": 52352,
+      "eval_loss": 0.0695087369531393,
+      "exact_match_accuracy": 100.0,
+      "token_accuracy": 100.0,
+      "avg_confidence": 5.829940836876631,
+      "avg_entropy": 2.9597175661474466,
+      "avg_edit_distance": 0.0,
+      "total_predictions": 100,
+      "total_exact_matches": 100,
+      "sample_predictions": [
+        {
+          "prompt": "PUZEXUPUZEXUPUZEXUPUZEXUPUZEXUPUZEXUP -> U\nNAHCNXMLONAHCNXMLONAHCNXMLON -> A\nVBIMHZVBIMHZVBIMHZVBIMHZVBIMHZVBIMHZ -> V\nLFZTOPLFZTOPLFZTOPLFZTOP -> L\nQZMOSCQZMOSCQZMOSCQZMO -> ",
+          "expected": "S",
+          "predicted": "S",
+          "raw_predicted": "S\nXXXXXXXXXXXXXXXXXX"
+        },
+        {
+          "prompt": "ZNUVYZNUVYZNUVYZNUVYZNUVYZN -> U\nDSCYEZAXQJDSCYEZAXQJDSCYEZAXQJDSCYEZ -> A\nQXCOKAQXCOKAQXCOKAQXCOKAQX -> C\nNVJMLJNVJMLJNVJMLJNVJMLJNVJMLJNVJMLJ -> ",
+          "expected": "N",
+          "predicted": "N",
+          "raw_predicted": "N\nXXXSXXXXSXXXXSXXXX"
+        },
+        {
+          "prompt": "TOCWPAOTOCWPAOTOCWPAOTOC -> W\nLNEDCGATHLNEDCGATHLNEDCGATHLNEDCGAT -> ",
+          "expected": "H",
+          "predicted": "H",
+          "raw_predicted": "H\nXXXXXXXXXXXXXXXXXX"
+        },
+        {
+          "prompt": "LNDDACLNDDACLNDDACLNDDACLNDDAC -> L\nVHYONFVHYONFVHYONFVHYONFVHYONFVH -> Y\nORQEDHNYORQEDHNYORQE -> D\nKEQLIQTLWAKEQLIQTLWAKEQLIQTLWAKEQL -> ",
+          "expected": "I",
+          "predicted": "I",
+          "raw_predicted": "I\nXXXXXXXXXXXXXXXXXX"
+        }
+      ]
+    },
+    "tt-150k": {
+      "model_scale": "tt-150k",
+      "parameters": 203008,
+      "eval_loss": 0.0738613959401846,
+      "exact_match_accuracy": 100.0,
+      "token_accuracy": 100.0,
+      "avg_confidence": 5.803882095962763,
+      "avg_entropy": 3.122194517403841,
+      "avg_edit_distance": 0.0,
+      "total_predictions": 100,
+      "total_exact_matches": 100,
+      "sample_predictions": [
+        {
+          "prompt": "DPRMJDVXGDPRMJDVXGDPRMJDVXGD -> P\nTXAXCEIAQTXAXCEIAQTXAXCEIAQTXA -> X\nTCNWXMIUUCTCNWXMIUUCT -> ",
+          "expected": "C",
+          "predicted": "C",
+          "raw_predicted": "C\nLLLULLLLULLLLULLLL"
+        },
+        {
+          "prompt": "JTGMEQOWSQJTGMEQOWSQJTGMEQOWSQJTGMEQO -> W\nOCQULJVNWZOCQULJVNWZOCQULJVNW -> Z\nRBHNENYQERBHNENYQERBHNENYQERBHNENYQER -> B\nGVRFVYHNZGVRFVYHNZGVRFVY -> H\nUCHUXDRGOBUCHUXDRGOBUCHUXDRGOBUCHUXD -> R\nIBWTBQIBWTBQIBWTBQIBWTBQIBWTBQ -> ",
+          "expected": "I",
+          "predicted": "I",
+          "raw_predicted": "I\nSZZVZSZZVZSZZVZSZZ"
+        },
+        {
+          "prompt": "LHPCUPFLHPCUPFLHPCUPFLHPCUPFLHPCUPFLHPCU -> P\nIMVWBGGCWXIMVWBGGCWXIMVWBGGCWXIMVWB -> ",
+          "expected": "G",
+          "predicted": "G",
+          "raw_predicted": "G\nLLLILLLLILLLLILLLL"
+        },
+        {
+          "prompt": "SHCWFFMAWSHCWFFMAWSHCWFFMAW -> S\nBWBUGMOABWBUGMOABWBUGMOA -> B\nIIFRJLOWHMIIFRJLOWHMIIFRJLOWHMIIFR -> ",
+          "expected": "J",
+          "predicted": "J",
+          "raw_predicted": "J\nLLLLLLLLLLLLLLLLLL"
+        }
+      ]
+    },
+    "tt-800k": {
+      "model_scale": "tt-800k",
+      "parameters": 799232,
+      "eval_loss": 0.07222006656229496,
+      "exact_match_accuracy": 100.0,
+      "token_accuracy": 100.0,
+      "avg_confidence": 5.814251154661179,
+      "avg_entropy": 3.061310827732086,
+      "avg_edit_distance": 0.0,
+      "total_predictions": 100,
+      "total_exact_matches": 100,
+      "sample_predictions": [
+        {
+          "prompt": "NGKFTHNGKFTHNGKFTHNGKFTHNGKFTHNGKF -> T\nQYSPETRQYSPETRQYSPETRQYSPETRQYSP -> E\nAWIHOAWIHOAWIHOAWIHOAWIHOAWIHOAW -> I\nJVVUXJVVUXJVVUXJVVUXJVVUXJV -> ",
+          "expected": "V",
+          "predicted": "V",
+          "raw_predicted": "V\nNSSSONSSSONSSSONSS"
+        },
+        {
+          "prompt": "DLFIFHJWDLFIFHJWDLFIFHJWDLFI -> F\nNUMCINUMCINUMCINUMCINU -> M\nZJLPBZSZJLPBZSZJLPBZSZJLPBZSZJL -> P\nIPEQAWIIPEQAWIIPEQAW -> ",
+          "expected": "I",
+          "predicted": "I",
+          "raw_predicted": "I\nNSSSONSSSONSSSONSS"
+        },
+        {
+          "prompt": "FQPQOOHVFQPQOOHVFQPQOOHVFQPQOOHVF -> Q\nYQXIOBAJYQXIOBAJYQXIOBAJYQXI -> ",
+          "expected": "O",
+          "predicted": "O",
+          "raw_predicted": "O\nNSSSONSSSONSSSONSS"
+        },
+        {
+          "prompt": "DDBQELNSDDBQELNSDDBQELNSDDB -> Q\nQBOYKTPQWQBOYKTPQWQBOYKTPQWQBOYKTPQWQBOY -> K\nBISFKEBISFKEBISFKEBISFKEBISFKEBISF -> K\nGPARPKGQVGPARPKGQVGPARPKGQV -> G\nJNMYALLRBBJNMYALLRBBJNMYALLRBB -> J\nUHHDYZUHHDYZUHHDYZUHHDYZUHHD -> ",
+          "expected": "Y",
+          "predicted": "Y",
+          "raw_predicted": "Y\nNSSSONSSSONSSSONSS"
+        }
+      ]
+    },
+    "tt-3000k": {
+      "model_scale": "tt-3000k",
+      "parameters": 3171328,
+      "eval_loss": 0.07006174884736538,
+      "exact_match_accuracy": 100.0,
+      "token_accuracy": 100.0,
+      "avg_confidence": 5.826092962175608,
+      "avg_entropy": 2.9913663957268,
+      "avg_edit_distance": 0.0,
+      "total_predictions": 100,
+      "total_exact_matches": 100,
+      "sample_predictions": [
+        {
+          "prompt": "PNSMYTEPNSMYTEPNSMYTEPNSMYTEPNSMYTEPNSMY -> T\nEDFFEDEDFFEDEDFFEDEDFFEDEDFFEDEDFFE -> ",
+          "expected": "D",
+          "predicted": "D",
+          "raw_predicted": "D\nFTTTTFTTTTFTTTTFTT"
+        },
+        {
+          "prompt": "NSFXGDEEYNSFXGDEEYNSF -> X\nVGHMMVGHMMVGHMMVGHMMVGHMM -> V\nFMZSJKXFMZSJKXFMZSJKXFMZSJKX -> F\nXLRZEISCXLRZEISCXLRZEISCXLRZEISC -> X\nQWJITYKTIVQWJITYKTIVQWJITYKTIVQWJIT -> Y\nQTWCGQBTJGQTWCGQBTJGQTWCGQBTJGQTWCGQB -> ",
+          "expected": "T",
+          "predicted": "T",
+          "raw_predicted": "T\nFKKKKFKKKKFKKKKFKK"
+        },
+        {
+          "prompt": "FUWTXZFUWTXZFUWTXZFUWTXZFUWTXZ -> F\nLLBTGGMXALLBTGGMXALLBT -> G\nLMQTKYXLMQTKYXLMQTKYXLMQ -> T\nSUJTTOTQQSUJTTOTQQSUJTTOTQQSUJTTOTQ -> ",
+          "expected": "Q",
+          "predicted": "Q",
+          "raw_predicted": "Q\nFTTTTFTTTTFTTTTFTT"
+        },
+        {
+          "prompt": "MUYMQDMUYMQDMUYMQDMUYM -> Q\nAQIOMXMFAQIOMXMFAQIOMXMFAQIOMXMFAQIO -> M\nOONOHDXLOONOHDXLOONOHDXLOO -> N\nBCSKMHUBCSKMHUBCSKMHUBCSKM -> H\nWSZQEQGNYTWSZQEQGNYTW -> S\nATRAIYSQLATRAIYSQLATRAIYSQLATRAIYSQLATR -> ",
+          "expected": "A",
+          "predicted": "A",
+          "raw_predicted": "A\nFTTTTFTTTTFTTTTFTT"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,467 @@
+{
+  "addition": {
+    "tt-1k": {
+      "0": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-4k": {
+      "0": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-8k": {
+      "0": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      }
+    },
+    "tt-14k": {
+      "0": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      }
+    },
+    "tt-26k": {
+      "0": {
+        "accuracy": 96.0,
+        "correct": 96,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 96.0,
+        "correct": 96,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 96.0,
+        "correct": 96,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 99.0,
+        "correct": 99,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 99.0,
+        "correct": 99,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 99.0,
+        "correct": 99,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    }
+  },
+  "mapping": {
+    "tt-1k": {
+      "0": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-4k": {
+      "0": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-8k": {
+      "0": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 100
+      }
+    },
+    "tt-14k": {
+      "0": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "total": 100
+      }
+    },
+    "tt-26k": {
+      "0": {
+        "accuracy": 14.000000000000002,
+        "correct": 14,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 17.0,
+        "correct": 17,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 14.000000000000002,
+        "correct": 14,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 19.0,
+        "correct": 19,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 20.0,
+        "correct": 20,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 15.0,
+        "correct": 15,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 9.0,
+        "correct": 9,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 13.0,
+        "correct": 13,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 20.0,
+        "correct": 20,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 17.0,
+        "correct": 17,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 23.0,
+        "correct": 23,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 17.0,
+        "correct": 17,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 13.0,
+        "correct": 13,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 13.0,
+        "correct": 13,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 18.0,
+        "correct": 18,
+        "total": 100
+      }
+    }
+  },
+  "pattern": {
+    "tt-1k": {
+      "0": {
+        "accuracy": 2.0,
+        "correct": 2,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 2.0,
+        "correct": 2,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 2.0,
+        "correct": 2,
+        "total": 100
+      }
+    },
+    "tt-4k": {
+      "0": {
+        "accuracy": 28.000000000000004,
+        "correct": 28,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 28.000000000000004,
+        "correct": 28,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 28.000000000000004,
+        "correct": 28,
+        "total": 100
+      }
+    },
+    "tt-8k": {
+      "0": {
+        "accuracy": 27.0,
+        "correct": 27,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 25.0,
+        "correct": 25,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 26.0,
+        "correct": 26,
+        "total": 100
+      }
+    },
+    "tt-14k": {
+      "0": {
+        "accuracy": 61.0,
+        "correct": 61,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 61.0,
+        "correct": 61,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 61.0,
+        "correct": 61,
+        "total": 100
+      }
+    },
+    "tt-26k": {
+      "0": {
+        "accuracy": 93.0,
+        "correct": 93,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 94.0,
+        "correct": 94,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 93.0,
+        "correct": 93,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    }
+  }
+}

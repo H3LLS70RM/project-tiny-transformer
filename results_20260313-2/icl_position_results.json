@@ -1,0 +1,263 @@
+{
+  "addition": {
+    "tt-26k": {
+      "0": {
+        "accuracy": 13.0,
+        "correct": 13,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 13.0,
+        "correct": 13,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 13.0,
+        "correct": 13,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 98.0,
+        "correct": 98,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 98.0,
+        "correct": 98,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 98.0,
+        "correct": 98,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 100.0,
+        "correct": 100,
+        "total": 100
+      }
+    }
+  },
+  "mapping": {
+    "tt-26k": {
+      "0": {
+        "accuracy": 12.0,
+        "correct": 12,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 19.0,
+        "correct": 19,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 12.0,
+        "correct": 12,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 16.0,
+        "correct": 16,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 12.0,
+        "correct": 12,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 16.0,
+        "correct": 16,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 21.0,
+        "correct": 21,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 18.0,
+        "correct": 18,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 13.0,
+        "correct": 13,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 18.0,
+        "correct": 18,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 15.0,
+        "correct": 15,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 14.000000000000002,
+        "correct": 14,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 15.0,
+        "correct": 15,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 14.000000000000002,
+        "correct": 14,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 14.000000000000002,
+        "correct": 14,
+        "total": 100
+      }
+    }
+  },
+  "decoding": {
+    "tt-26k": {
+      "0": {
+        "accuracy": 34.0,
+        "correct": 34,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 27.0,
+        "correct": 27,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 39.0,
+        "correct": 39,
+        "total": 100
+      }
+    },
+    "tt-50k": {
+      "0": {
+        "accuracy": 30.0,
+        "correct": 30,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 30.0,
+        "correct": 30,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 40.0,
+        "correct": 40,
+        "total": 100
+      }
+    },
+    "tt-150k": {
+      "0": {
+        "accuracy": 28.999999999999996,
+        "correct": 29,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 35.0,
+        "correct": 35,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 37.0,
+        "correct": 37,
+        "total": 100
+      }
+    },
+    "tt-800k": {
+      "0": {
+        "accuracy": 34.0,
+        "correct": 34,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 30.0,
+        "correct": 30,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 36.0,
+        "correct": 36,
+        "total": 100
+      }
+    },
+    "tt-3000k": {
+      "0": {
+        "accuracy": 24.0,
+        "correct": 24,
+        "total": 100
+      },
+      "1": {
+        "accuracy": 38.0,
+        "correct": 38,
+        "total": 100
+      },
+      "2": {
+        "accuracy": 38.0,
+        "correct": 38,
+        "total": 100
+      }
+    }
+  }
+}
