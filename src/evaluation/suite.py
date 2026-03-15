@@ -45,14 +45,14 @@ def calculate_conditional_likelihood(model, context_ids, target_ids, device):
 
 # --- Core Evaluation Functions ---
 
-def evaluate_model(model, dataset, task, batch_size=32, max_len=256, device='cpu', model_scale=None):
+def evaluate_model(model, dataset, task, batch_size=32, max_len=256, device='cpu', model_scale=None, json_path=None):
     """Standard Exact Match and Token Accuracy evaluation."""
     stoi, itos = model.stoi, model.itos
     model.eval()
     
     total_exact_matches = 0
     total_tokens, correct_tokens = 0, 0
-    total_loss, num_batches = 0, 0
+    total_edit_distance = 0
     
     with torch.no_grad():
         for i in range(0, len(dataset), batch_size):
@@ -76,25 +76,47 @@ def evaluate_model(model, dataset, task, batch_size=32, max_len=256, device='cpu
                     correct_tokens += (pred == actual).sum().item()
                     total_tokens += (end - start)
                     
-                    # Greedy generation for exact match
+                    # Greedy generation for exact match & edit distance
                     gen_toks = padded[b_idx, :prompt_lens[b_idx]].tolist()
-                    for _ in range(20):
+                    max_gen = min(20, model.max_len - len(gen_toks))
+                    stop_id = stoi.get('\n', -1)
+                    for _ in range(max_gen):
                         out = model(torch.tensor([gen_toks]).to(device))
                         nxt = out[0, -1, :].argmax().item()
                         gen_toks.append(nxt)
-                        if nxt == 0: break
-                    gen_text = ''.join([itos.get(t, '') for t in gen_toks[prompt_lens[b_idx]:] if t != 0])
-                    # Task-specific extraction
-                    match = re.search(r'\d+', gen_text) if task in ('addition', 'mapping') else re.search(r'[A-Z]', gen_text)
-                    if (match.group(0) if match else gen_text.strip()) == batch[b_idx]['answer'].strip():
+                        if nxt == 0 or nxt == stop_id or len(gen_toks) >= model.max_len: break
+                    
+                    gen_answer = ''.join([itos.get(t, '') for t in gen_toks[prompt_lens[b_idx]:] if t != 0])
+                    true_answer = batch[b_idx]['answer'].strip()
+                    
+                    # Extract everything up to the first newline
+                    extracted_answer = gen_answer.split('\n')[0].strip()
+                    
+                    # Calculate edit distance on the extracted answer part
+                    total_edit_distance += calculate_edit_distance(extracted_answer, true_answer)
+                    
+                    if extracted_answer == true_answer:
                         total_exact_matches += 1
-            
-            num_batches += 1
             
     results = {
         "exact_match_accuracy": (total_exact_matches / len(dataset)) * 100,
         "token_accuracy": (correct_tokens / total_tokens) * 100 if total_tokens > 0 else 0,
+        "avg_edit_distance": total_edit_distance / len(dataset) if len(dataset) > 0 else 0,
     }
+
+    if json_path and model_scale:
+        os.makedirs(os.path.dirname(json_path), exist_ok=True)
+        all_data = {}
+        if os.path.exists(json_path):
+            with open(json_path, 'r') as f:
+                try: all_data = json.load(f)
+                except: all_data = {}
+        
+        if task not in all_data: all_data[task] = {}
+        all_data[task][model_scale] = results
+        with open(json_path, 'w') as f:
+            json.dump(all_data, f, indent=2)
+
     return results
 
 def save_raw_predictions(model, dataset, task, model_scale, device='cpu', n_samples=20):
@@ -116,11 +138,13 @@ def save_raw_predictions(model, dataset, task, model_scale, device='cpu', n_samp
             gen_toks = list(p_toks)
             
             # Greedy generation
-            for _ in range(20):
+            max_gen = min(20, model.max_len - len(p_toks))
+            stop_id = stoi.get('\n', -1)
+            for _ in range(max_gen):
                 out = model(torch.tensor([gen_toks]).to(device))
                 nxt = out[0, -1, :].argmax().item()
                 gen_toks.append(nxt)
-                if nxt == 0: break
+                if nxt == 0 or nxt == stop_id or len(gen_toks) >= model.max_len: break
                 
             gen_text = ''.join([itos.get(t, '') for t in gen_toks[len(p_toks):] if t != 0])
             
@@ -218,6 +242,70 @@ def probe_induction_heads(model, task, device):
         scores.append(layer_attn[0, :, -1, t_pos+1].cpu().numpy())
     return float(np.max(scores)) if scores else 0.0
 
+def evaluate_label_flipping(model, task, n_samples=20, device='cpu'):
+    """
+    Evaluates if the model can follow 'flipped' labels in the context.
+    Ported from evaluate_icl_emergence.py.
+    """
+    stoi, itos = model.stoi, model.itos
+    model.eval()
+    
+    correct_flips = 0
+    predictions = []
+    
+    for _ in range(n_samples):
+        if task == "addition":
+            a, b = random.randint(0, 5), random.randint(0, 5)
+            true_ans = a + b
+            flip_ans = random.randint(0, 9)
+            while flip_ans == true_ans:
+                flip_ans = random.randint(0, 9)
+            prompt = f"{a} + {b} = {flip_ans}\n{a} + {b} = "
+            target = str(flip_ans)
+        elif task == "mapping":
+            x = random.randint(1, 10)
+            true_y = x 
+            flip_y = random.randint(0, 9)
+            while flip_y == true_y:
+                flip_y = random.randint(0, 9)
+            prompt = f"{x} -> {flip_y}\n{x} -> "
+            target = str(flip_y)
+        elif task == "decoding":
+            chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            k = random.choice(chars)
+            true_v = k 
+            flip_v = random.choice([c for c in chars if c != true_v])
+            prompt = f"{k} -> {flip_v}\n{k} -> "
+            target = flip_v
+        else:
+            continue
+
+        p_toks = [stoi.get(c, 0) for c in prompt]
+        curr = p_toks[:]
+        stop_id = stoi.get('\n', -1)
+        
+        with torch.no_grad():
+            for _ in range(10):
+                inp = torch.tensor([curr]).to(device)
+                out = model(inp)
+                nxt = out[0, -1, :].argmax().item()
+                curr.append(nxt)
+                if nxt == 0 or nxt == stop_id: break
+        
+        gen_text = ''.join([itos.get(t, '') for t in curr[len(p_toks):] if t != 0])
+        extracted = gen_text.split('\n')[0].strip()
+        
+        if extracted == target:
+            correct_flips += 1
+            
+        predictions.append({
+            "flip_prompt": prompt,
+            "flip_target": target,
+            "flip_pred": extracted
+        })
+        
+    return (correct_flips / n_samples), predictions
+
 def evaluate_icl_scaling(model, task, n_samples=100, device='cpu'):
     """Evaluates accuracy across literal few-shot counts."""
     results = {}
@@ -225,6 +313,7 @@ def evaluate_icl_scaling(model, task, n_samples=100, device='cpu'):
         ds = SyntheticICLDataset(task=task, n_samples=n_samples, n_context=n_shots).build_dataset(return_answer=True)
         res = evaluate_model(model, ds, task, device=device)
         results[f"{n_shots}_shot_accuracy"] = res['exact_match_accuracy']
+        results[f"{n_shots}_shot_edit_distance"] = res['avg_edit_distance']
     return results
 
 # --- Main Entry Point ---
@@ -256,19 +345,26 @@ def run_suite(model_scale, task, device='cpu'):
     latest_ckpt = max(ckpts, key=lambda x: int(re.search(r"model-step-(\d+)", x).group(1)))
     model.load_state_dict(torch.load(latest_ckpt, map_location=device))
     
+    # Calculate emergence metrics
+    flip_score, _ = evaluate_label_flipping(model, task, device=device)
+    max_induction = probe_induction_heads(model, task, device)
+    lcs = calculate_lcs(model, task, device=device)
+    
     results = {
         "model_scale": model_scale,
         "task": task,
         "checkpoint": os.path.basename(latest_ckpt),
-        "lcs_score": calculate_lcs(model, task, device=device),
-        "induction_score": probe_induction_heads(model, task, device),
-        **evaluate_icl_scaling(model, task, device=device)
+        "lcs_score": lcs,
+        "induction_score": max_induction,
+        **evaluate_icl_scaling(model, task, device=device),
+        "flip_score": flip_score
     }
 
     # Log raw predictions for manual inspection (using 5-shot samples)
     logging_ds = SyntheticICLDataset(task=task, n_samples=20, n_context=5).build_dataset(return_answer=True)
     save_raw_predictions(model, logging_ds, task, model_scale, device=device)
     
+    # 1. Standard Suite Results
     save_path = f"results/evaluation/suite_{task}.json"
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     all_data = {}
@@ -276,6 +372,20 @@ def run_suite(model_scale, task, device='cpu'):
         with open(save_path, "r") as f: all_data = json.load(f)
     all_data[model_scale] = results
     with open(save_path, "w") as f: json.dump(all_data, f, indent=2)
+    
+    # 2. Emergence Results (consolidated for all tasks/scales as expected by visualize.py)
+    emergence_path = "results/icl_emergence_results.json"
+    emerg_data = {}
+    if os.path.exists(emergence_path):
+        with open(emergence_path, "r") as f: emerg_data = json.load(f)
+    
+    if task not in emerg_data: emerg_data[task] = {}
+    emerg_data[task][model_scale] = {
+        "flip_score": flip_score,
+        "lcs_score": lcs,
+        "max_induction_score": max_induction
+    }
+    with open(emergence_path, "w") as f: json.dump(emerg_data, f, indent=2)
     
     print(f"Results saved to {save_path}")
     for k, v in results.items(): print(f"  {k}: {v}")

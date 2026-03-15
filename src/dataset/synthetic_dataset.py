@@ -84,17 +84,17 @@ class SyntheticICLDataset:
                     while wrong == ans:
                         wrong = random.randint(*self.addition_range) + random.randint(*self.addition_range)
                     ans = wrong
-                if(a in [e.split(" + ")[0] for e in examples] and b in [e.split(" + ")[1] for e in examples]):
+                if(str(a) in [e.split(" + ")[0] for e in examples] and str(b) in [e.split(" + ")[1] for e in examples]):
                     continue
                 examples.append(f"{a} + {b} = {ans}")
             while(True):
                 a = random.randint(*self.addition_range)
                 b = random.randint(*self.addition_range)
-                if(a in [e.split(" + ")[0] for e in examples] and b in [e.split(" + ")[1] for e in examples]):
+                if(str(a) in [e.split(" + ")[0] for e in examples] and str(b) in [e.split(" + ")[1] for e in examples]):
                     continue
                 break
             query = f"{a} + {b} = "
-            answer = str(a + b)
+            answer = str(a + b) + "\n"
         elif self.task == "mapping":
             a = random.randint(*self.mapping_range)
             b = random.randint(*self.mapping_b_range)
@@ -109,7 +109,7 @@ class SyntheticICLDataset:
                     while wrong_y == y:
                         wrong_y = random.randint(-100, 1000)
                     y = wrong_y
-                if(x in [e.split(" -> ")[0] for e in examples]):
+                if(str(x) in [e.split(" -> ")[0] for e in examples]):
                     continue
                 examples.append(f"{x} -> {y}")
             # for _ in range(current_n_context):
@@ -126,11 +126,11 @@ class SyntheticICLDataset:
             while(True):
                 x = random.randint(*self.mapping_range)
                 y = self.mapping_fn(a, b, x)
-                if(x in [e.split(" -> ")[0] for e in examples]):
+                if(str(x) in [e.split(" -> ")[0] for e in examples]):
                     continue
                 break
             query = f"{x} -> "
-            answer = str(y)   
+            answer = str(y) + "\n"
         elif self.task == "decoding":
             # Substitution Cipher
             chars = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -157,7 +157,7 @@ class SyntheticICLDataset:
                 query_k = random.choice(chars)
                 
             query = f"{query_k} -> "
-            answer = cipher_map[query_k]
+            answer = cipher_map[query_k] + "\n"
         else:
             raise ValueError(f"Invalid task: {self.task}")
         prompt = "\n".join(examples) + "\n" + query

@@ -145,28 +145,68 @@ def plot_emergence_results(results_path="results/icl_emergence_results.json", ou
         plt.savefig(os.path.join(output_dir, f"icl_emergence_combined_{task}.png"))
         plt.close()
 
-    # 3. Global Summary (Flip scores across all tasks)
-    plt.figure(figsize=(12, 6))
-    all_tasks = list(data.keys())
-    for task in all_tasks:
-        scales = data[task]
-        sorted_scales = get_sorted_models(scales)
-        if not sorted_scales: continue
-        flip_scores = [scales[s].get('flip_score', 0) * 100 for s in sorted_scales]
-        plt.plot(sorted_scales, flip_scores, marker='o', label=task.capitalize())
+def plot_model_scaling_metrics(results_path="results/evaluation/suite_*.json", output_dir="results/plots"):
+    """Plots Accuracy vs Model Scale and Edit Distance vs Model Scale."""
+    os.makedirs(output_dir, exist_ok=True)
+    res_files = glob.glob(results_path)
     
-    plt.title("ICL Emergence Summary (Flip Scores)")
-    plt.xlabel("Model Scale")
-    plt.ylabel("Flip Score Accuracy (%)")
-    plt.legend(); plt.grid(True); plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "icl_emergence_summary.png"))
-    plt.close()
+    # Helper to parse parameter count from scale string
+    def parse_params(scale):
+        match = re.search(r'tt-(\d+)([km]?)', scale)
+        if not match: return 0
+        val = int(match.group(1))
+        unit = match.group(2)
+        if unit == 'k': val *= 1000
+        elif unit == 'm': val *= 1000000
+        return val
+
+    for res_file in res_files:
+        task = re.search(r'suite_(.*).json', os.path.basename(res_file)).group(1)
+        with open(res_file, 'r') as f: data = json.load(f)
+        
+        sorted_scales = get_sorted_models(data)
+        if not sorted_scales: continue
+        
+        param_counts = [parse_params(s) for s in sorted_scales]
+        
+        # 1. Accuracy vs Model Scale (5-shot)
+        plt.figure(figsize=(10, 6))
+        acc_vals = [data[s].get('5_shot_accuracy', 0) for s in sorted_scales]
+        plt.semilogx(param_counts, acc_vals, marker='o', linewidth=2, color='royalblue')
+        plt.title(f"Model Scaling: Accuracy vs Parameters - {task.capitalize()}")
+        plt.xlabel("Model Parameters (Log Scale)")
+        plt.ylabel("5-Shot Accuracy (%)")
+        plt.grid(True, which="both", ls="-", alpha=0.5)
+        # Label points with scale name
+        for i, s in enumerate(sorted_scales):
+             plt.text(param_counts[i], acc_vals[i], s, fontsize=9, ha='right', va='bottom')
+        plt.savefig(os.path.join(output_dir, f"scaling_accuracy_{task}.png"), bbox_inches='tight')
+        plt.close()
+
+        # 2. Token Edit Distance vs Model Scale (5-shot)
+        plt.figure(figsize=(10, 6))
+        # Only plot if we have edit distance data (check for key existence)
+        valid_indices = [i for i, s in enumerate(sorted_scales) if '5_shot_edit_distance' in data[s]]
+        if valid_indices:
+            p_subset = [param_counts[i] for i in valid_indices]
+            d_subset = [data[sorted_scales[i]]['5_shot_edit_distance'] for i in valid_indices]
+            s_subset = [sorted_scales[i] for i in valid_indices]
+            
+            plt.semilogx(p_subset, d_subset, marker='s', linewidth=2, color='crimson')
+            plt.title(f"Model Scaling: Edit Distance vs Parameters - {task.capitalize()}")
+            plt.xlabel("Model Parameters (Log Scale)")
+            plt.ylabel("Average Token Edit Distance (Lower is Better)")
+            plt.grid(True, which="both", ls="-", alpha=0.5)
+            for i, s in enumerate(s_subset):
+                 plt.text(p_subset[i], d_subset[i], s, fontsize=9, ha='right', va='bottom')
+            plt.savefig(os.path.join(output_dir, f"scaling_dist_{task}.png"), bbox_inches='tight')
+            plt.close()
 
 def main():
     parser = argparse.ArgumentParser(description="Visualize project results.")
     parser.add_argument("--logs", action="store_true", help="Plot training progress.")
     parser.add_argument("--icl", action="store_true", help="Plot ICL evaluation results.")
+    parser.add_argument("--scaling", action="store_true", help="Plot model scaling metrics.")
     parser.add_argument("--all", action="store_true", help="Plot everything.")
     args = parser.parse_args()
 
@@ -178,6 +218,9 @@ def main():
         plot_icl_results()
         print("Plotting emergence results...")
         plot_emergence_results()
+    if args.scaling or args.all:
+        print("Plotting model scaling metrics...")
+        plot_model_scaling_metrics()
 
 if __name__ == "__main__":
     main()
