@@ -1,108 +1,66 @@
+import os
+import sys
+# Add project root to sys.path for robust imports
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import torch
-from src.model.tiny_transformer_rope import TinyTransformerRoPE
+from src.model.tiny_transformer import TinyTransformer
 from src.configs.model_configs import config
+from src.evaluation.suite import evaluate_model, save_raw_predictions
+from src.evaluation.probes import evaluate_generalization
 from src.dataset.synthetic_dataset import SyntheticICLDataset
-from src.evaluation.evaluate_model import evaluate_model
+from src.utils import get_task_vocab
 import glob
-import os
 import re
 
-def evaluate_generalization(model_scale='tt-3000k', task='addition', checkpoint_dir=None):
+def run_generalization_test(model_scale='tt-3000k', task='addition', checkpoint_dir=None):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"Using device: {device}")
     
-    # Load Model Configuration
-    print(f"Loading config for scale '{model_scale}'...")
     cfg = config(model_scale)
     
-    # Initialize Model
-    print("Building vocabulary from standard distribution...")
-    dummy_data = SyntheticICLDataset(task=task, n_samples=1000).build_dataset(return_answer=True)
-    all_text = ''.join([item['prompt'] + item['answer'] for item in dummy_data])
-    vocab = sorted(set(all_text))
-    stoi = {ch: i+1 for i, ch in enumerate(vocab)}
-    itos = {i+1: ch for i, ch in enumerate(vocab)}
-    stoi['<pad>'] = 0
-    itos[0] = '<pad>'
+    # Setup vocab
+    stoi, itos = get_task_vocab(task)
     
-    model = TinyTransformerRoPE(
-        vocab_size=len(stoi),
-        dim=cfg['dim'],
-        depth=cfg['depth'],
-        n_heads=cfg['n_heads'],
-        mlp_dim=cfg['mlp_dim'],
-        max_len=cfg['max_len'],
-        stoi=stoi,
-        itos=itos
+    model = TinyTransformer(
+        vocab_size=len(stoi), dim=cfg['dim'], depth=cfg['depth'], n_heads=cfg['n_heads'],
+        stoi=stoi, itos=itos, configkey=model_scale, mlp_dim=cfg['mlp_dim'],
+        max_len=cfg.get('max_len', 256), use_rope=True
     ).to(device)
     
-    # Load Checkpoint
     if checkpoint_dir is None:
         checkpoint_dir = f"checkpoints/{task}/{model_scale}/"
-        
-    pattern = f"{checkpoint_dir}model-step-*.pt"
-    checkpoints = glob.glob(pattern)
-    
-    if not checkpoints:
+    ckpts = glob.glob(f"{checkpoint_dir}model-step-*.pt")
+    if not ckpts:
         print(f"No checkpoints found in {checkpoint_dir}")
         return
+    latest_ckpt = max(ckpts, key=lambda x: int(re.search(r"model-step-(\d+)", x).group(1)))
+    model.load_state_dict(torch.load(latest_ckpt, map_location=device))
 
-    # Find latest checkpoint
-    def extract_step(ckpt):
-        m = re.search(r"model-step-(\d+)", ckpt)
-        return int(m.group(1)) if m else 0
-    latest_ckpt = max(checkpoints, key=extract_step)
-    print(f"Loading checkpoint: {latest_ckpt}")
-    
-    try:
-        model.load_state_dict(torch.load(latest_ckpt, map_location=device))
-    except RuntimeError as e:
-        print(f"Error loading checkpoint: {e}")
-        return
+    # Run modular generalization test
+    results = evaluate_generalization(model, task, evaluate_model, n_samples=500, device=device)
+    print(f"\nGeneralization Results for {model_scale}:")
+    for k, v in results.items():
+        print(f"  {k}: {v:.2f}")
 
-    # Generate datasets
-    print("\nGenerating In-Distribution Dataset...")
-    in_dist_data = SyntheticICLDataset(
-        task=task, 
-        n_samples=500, 
-        n_context=5,
-    ).build_dataset(return_answer=True)
-    
-    print("Generating Out-of-Distribution Dataset...")
+    # Log OOD raw predictions for debugging (V2 Defaults)
     if task == "addition":
-        ood_data = SyntheticICLDataset(
-            task=task, 
-            n_samples=500, 
-            n_context=5,
-            addition_range=(100, 110)
-        ).build_dataset(return_answer=True)
+        ood_logging_ds = SyntheticICLDataset(task=task, n_samples=20, n_context=5, is_ood=True, digit_level=True).build_dataset(return_answer=True)
     elif task == "mapping":
-        ood_data = SyntheticICLDataset(
-            task=task, 
-            n_samples=500, 
-            n_context=5,
-            mapping_fn = lambda a,b,x: a * b * x + 11,
-            mapping_range=(1, 10),
-            mapping_b_range=(1, 30)
-        ).build_dataset(return_answer=True)
+        ood_logging_ds = SyntheticICLDataset(task=task, n_samples=20, n_context=5, is_ood=True, mapping_ood_type='extrapolation').build_dataset(return_answer=True)
     elif task == "decoding":
-        ood_data = SyntheticICLDataset(
-            task=task, 
-            n_samples=500, 
-            n_context=5,
-            motif_range=(11, 15)
-        ).build_dataset(return_answer=True)
-
-    # Evaluate
-    print(f"\nEvaluating In-Distribution (0-99)...")
-    evaluate_model(model, in_dist_data, task, device=device, model_scale=model_scale, json_path=f"results/evaluation/gen_in_dist_{task}.json")
-    
-    print(f"\nEvaluating Out-of-Distribution in {task}...")
-    evaluate_model(model, ood_data, task, device=device, model_scale=model_scale, json_path=f"results/evaluation/gen_ood_{task}.json")
+        ood_logging_ds = SyntheticICLDataset(task=task, n_samples=20, n_context=5, is_ood=True, decoding_reversal=True).build_dataset(return_answer=True)
+    else:
+        ood_logging_ds = SyntheticICLDataset(task=task, n_samples=20, n_context=5, is_ood=True).build_dataset(return_answer=True)
+    save_raw_predictions(model, ood_logging_ds, task, model_scale, device=device, suffix="ood")
 
 if __name__ == "__main__":
-    # You can change the scale here or use argparse
-    for task in ['mapping']:
-        for model_scale in ['tt-26k', 'tt-40k', 'tt-50k', 'tt-150k', 'tt-800k', 'tt-3000k']:
-            evaluate_generalization(model_scale=model_scale, task=task)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--tasks", nargs="+", default=['addition', 'decoding', 'mapping'])
+    parser.add_argument("--configs", nargs="+", default=['tt-1k', 'tt-4k', 'tt-8k', 'tt-14k', 'tt-26k', 'tt-50k', 'tt-150k', 'tt-800k', 'tt-3000k'])
+    args = parser.parse_args()
+    
+    for task in args.tasks:
+        for model_scale in args.configs:
+            run_generalization_test(model_scale=model_scale, task=task)

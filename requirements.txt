@@ -1,0 +1,7 @@
+torch==2.9.1+cu130
+tqdm==4.67.1
+matplotlib==3.10.7
+numpy==2.3.3
+seaborn==0.13.2
+pandas==2.3.3
+torchvision==0.24.1+cu130

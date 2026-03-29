@@ -5,15 +5,14 @@ import torch.nn.functional as F
 from tqdm import tqdm
 import os
 import json
-import random
 
 from src.dataset.synthetic_dataset import SyntheticICLDataset
 
 # RoPE Implementation
 class RotaryEmbedding(nn.Module):
-    def __init__(self, dim, max_seq_len=10000):
+    def __init__(self, dim, base=10000):
         super().__init__()
-        inv_freq = 1.0 / (max_seq_len ** (torch.arange(0, dim, 2).float() / dim))
+        inv_freq = 1.0 / (base ** (torch.arange(0, dim, 2).float() / dim))
         self.register_buffer("inv_freq", inv_freq)
         self.curr_seq_len = 0
         self.cached_cos = None
@@ -52,6 +51,7 @@ class TinySelfAttention(nn.Module):
         self.dim = dim
         self.n_heads = n_heads
         self.head_dim = dim // n_heads
+        assert self.head_dim % 2 == 0, "RoPE requires an even head dimension."
 
         self.qkv = nn.Linear(dim, dim * 3, bias=False)
         self.proj = nn.Linear(dim, dim, bias=False)
@@ -112,7 +112,7 @@ class TinyTransformer(nn.Module):
         self.configkey = configkey
         self.rope = None
         if(use_rope):
-            self.rope = RotaryEmbedding(dim // n_heads, max_seq_len=max_len)
+            self.rope = RotaryEmbedding(dim // n_heads, base=10000)
         else:
             self.pos_emb = nn.Parameter(torch.randn(1, max_len, dim) * 0.01)
         
@@ -152,14 +152,18 @@ class TinyTransformer(nn.Module):
             maps.append(blk.attn.attn_weights)
         return maps
 
-    def quick_icl_eval(self, task, stoi, itos, n_samples=50, n_shots=3, max_len=256, device='cpu'):
+    def quick_icl_eval(self, task, stoi, itos, n_samples=100, n_shots=3, max_len=256, device='cpu', dataset=None, digit_level=False, rule_diversity=False, hard_icl=False):
         """
         Lightweight ICL evaluation: generates n_samples few-shot prompts,
         does greedy decoding, and returns exact-match accuracy (0.0 - 1.0).
         """
         self.eval()
-        ds = SyntheticICLDataset(task=task, n_samples=n_samples, n_context=n_shots)
-        data = ds.build_dataset(return_answer=True)
+        if dataset is None:
+            from src.dataset.synthetic_dataset import SyntheticICLDataset
+            ds = SyntheticICLDataset(task=task, n_samples=n_samples, n_context=n_shots, digit_level=digit_level, rule_diversity=rule_diversity, hard_icl=hard_icl)
+            data = ds.build_dataset(return_answer=True)
+        else:
+            data = dataset
 
         correct = 0
         with torch.no_grad():
@@ -177,7 +181,9 @@ class TinyTransformer(nn.Module):
                     if nxt == 0 or nxt == stop_id:
                         break
                 gen = ''.join([itos.get(t, '') for t in curr[len(p_tokens):] if t != 0])
+                # Universal extraction: everything up to the first newline
                 pred = gen.split('\n')[0].strip()
+                
                 if pred == item['answer'].strip():
                     correct += 1
         self.train()
@@ -185,8 +191,9 @@ class TinyTransformer(nn.Module):
 
     def fit(self, data_fn, steps, batch_size, lr=3e-4, weight_decay=0.1, device='cpu', 
             checkpoint_path=None, checkpoint_interval=1000, start_step=0, log_file=None, 
-            test_data_fn=None, icl_early_stopping=False, icl_eval_fn=None, 
-            eval_interval=500, log_interval=250):
+            test_data_fn=None, loss_early_stopping=False, icl_early_stopping=False, 
+            icl_eval_fn=None, eval_interval=500, log_interval=250, 
+            patience_limit=3000, icl_patience_limit=None, fixed_icl_val_ds=None, label_smoothing=0.1):
         """
         Core training loop with logging, early stopping, and checkpointing.
         """
@@ -199,10 +206,11 @@ class TinyTransformer(nn.Module):
         opt = torch.optim.AdamW(self.parameters(), lr=lr, weight_decay=weight_decay)
         
         warmup_steps = 1000
+        decay_horizon = steps if steps is not None else 50000
         def get_lr(step):
             if step < warmup_steps:
                 return step / warmup_steps
-            progress = (step - warmup_steps) / max(1, steps - warmup_steps)
+            progress = min(1.0, (step - warmup_steps) / max(1, decay_horizon - warmup_steps))
             return 0.5 * (1.0 + math.cos(math.pi * progress))
             
         scheduler = torch.optim.lr_scheduler.LambdaLR(opt, get_lr)
@@ -211,13 +219,18 @@ class TinyTransformer(nn.Module):
         # Early stopping init
         best_loss = float('inf')
         loss_patience = 0
-        patience_limit = 2000
         min_delta = 1e-4
 
         # ICL-based early stopping init
         best_icl_acc = -1.0
         icl_patience = 0
-        icl_patience_limit = max(1, 3000 // eval_interval)
+        
+        # Override to user preference (5,000 steps patience for ICL, 10,000 for Loss)
+        patience_limit_steps = 10000
+        icl_patience_limit_steps = 5000
+        
+        if icl_patience_limit is None:
+            icl_patience_limit = max(1, icl_patience_limit_steps // eval_interval)
         icl_check_interval = eval_interval
         icl_min_step = 2000 
         
@@ -229,13 +242,20 @@ class TinyTransformer(nn.Module):
             except Exception as e:
                 print(f"Warning: Could not load existing log file: {e}")
 
+        import itertools
+        
         current_icl_acc = 0.0
-        progress = tqdm(range(start_step, steps), desc="Training", total=steps, initial=start_step, leave=True)
+        if steps is not None:
+            progress = tqdm(range(start_step, steps), desc="Training", total=steps, initial=start_step, leave=True)
+        else:
+            progress = tqdm(itertools.count(start_step), desc="Training (Infinite)", initial=start_step, leave=True)
+            
         early_stop = False
-        early_stop_step = steps
+        early_stop_step = steps if steps is not None else 0
 
         for step in progress:
             batch_data = data_fn(batch_size)
+            eval_ran = False
             if len(batch_data) == 3:
                 inp, tgt, mask = batch_data
                 mask = mask.to(device)
@@ -247,14 +267,14 @@ class TinyTransformer(nn.Module):
             logits = self(inp)
             
             if mask is not None:
-                loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), tgt.reshape(-1), ignore_index=0, label_smoothing=0.1)
+                loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), tgt.reshape(-1), ignore_index=0, label_smoothing=label_smoothing)
                 with torch.no_grad():
                     pred = logits.argmax(dim=-1)
                     correct = (pred == tgt) & mask
                     total_masked = mask.sum()
                     accuracy = correct.sum().float() / total_masked if total_masked > 0 else torch.tensor(0.0, device=device)
             else:
-                loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), tgt.reshape(-1), ignore_index=0, label_smoothing=0.1)
+                loss = F.cross_entropy(logits.reshape(-1, logits.size(-1)), tgt.reshape(-1), ignore_index=0, label_smoothing=label_smoothing)
                 with torch.no_grad():
                     pred = logits.argmax(dim=-1)
                     correct = (pred == tgt)
@@ -270,6 +290,7 @@ class TinyTransformer(nn.Module):
             monitor_acc = accuracy.item()
             
             if test_data_fn and step % eval_interval == 0:
+                eval_ran = True
                 self.eval()
                 with torch.no_grad():
                     t_data = test_data_fn(batch_size)
@@ -280,9 +301,10 @@ class TinyTransformer(nn.Module):
                         t_inp, t_tgt = t_data
                         t_mask = None
                     
-                    t_inp, t_tgt = t_inp.to(device), t_tgt.to(device)
+                    t_inp, t_tgt, t_mask = t_inp.to(device), t_tgt.to(device), (t_mask.to(device) if t_mask is not None else None)
                     t_logits = self(t_inp)
-                    test_loss = F.cross_entropy(t_logits.reshape(-1, t_logits.size(-1)), t_tgt.reshape(-1), ignore_index=0, label_smoothing=0.1)
+                    # Use label_smoothing=0.0 for validation/test loss to get "pure" cross-entropy
+                    test_loss = F.cross_entropy(t_logits.reshape(-1, t_logits.size(-1)), t_tgt.reshape(-1), ignore_index=0, label_smoothing=0.0)
                     monitor_loss = test_loss.item()
                     
                     t_pred = t_logits.argmax(dim=-1)
@@ -294,31 +316,48 @@ class TinyTransformer(nn.Module):
                         monitor_acc = (t_pred == t_tgt).float().mean().item()
 
                 self.train()
-                
+                # Save best loss checkpoint
                 if monitor_loss < best_loss - min_delta:
                     best_loss = monitor_loss
                     loss_patience = 0
+                    if checkpoint_path:
+                        torch.save(self.state_dict(), os.path.join(checkpoint_path, "model_best.pt"))
                 else:
                     loss_patience += 1
-                    
-                if loss_patience >= (patience_limit // eval_interval):
+                
+                if loss_early_stopping and loss_patience >= (patience_limit_steps // eval_interval):
                     early_stop = True
                     early_stop_step = step
                     break
 
-            if icl_early_stopping and icl_eval_fn and step >= icl_min_step and step % icl_check_interval == 0:
-                current_icl_acc = icl_eval_fn()
+            if icl_eval_fn and step >= icl_min_step and step % icl_check_interval == 0:
+                progress.set_description("Evaluating ICL...")
+                current_icl_acc = icl_eval_fn(dataset=fixed_icl_val_ds) if fixed_icl_val_ds is not None else icl_eval_fn()
+                progress.set_description("Training (Infinite)" if steps is None else "Training")
+                
+                # Save best ICL checkpoint
                 if current_icl_acc > best_icl_acc:
                     best_icl_acc = current_icl_acc
                     icl_patience = 0
+                    if checkpoint_path:
+                        torch.save(self.state_dict(), os.path.join(checkpoint_path, "model_best_icl.pt"))
+                        print(f" -> New best ICL accuracy: {best_icl_acc:.4f} (Step {step})")
                 else:
                     icl_patience += 1
+
+                if icl_early_stopping and icl_patience >= icl_patience_limit:
+                    print(f" -> ICL early stopping triggered (patience {icl_patience_limit} exceeded).")
+                    early_stop = True
+                    early_stop_step = step
+                    break
                     
-                if icl_patience >= icl_patience_limit:
+                if current_icl_acc >= 1.0:
+                    print(f" -> 100% ICL Accuracy achieved! Halting training at step {step}.")
                     early_stop = True
                     early_stop_step = step
                     break
 
+            # Log metrics
             if log_file and step % log_interval == 0 and step > 0:
                 metric_entry = {
                     "step": step,
@@ -327,7 +366,7 @@ class TinyTransformer(nn.Module):
                     "icl_accuracy": round(current_icl_acc, 4),
                     "lr": round(scheduler.get_last_lr()[0], 6)
                 }
-                if test_data_fn:
+                if test_data_fn and eval_ran:
                     metric_entry["test_loss"] = round(monitor_loss, 4)
                     metric_entry["test_accuracy"] = round(monitor_acc, 4)
                 metrics.append(metric_entry)
@@ -345,9 +384,53 @@ class TinyTransformer(nn.Module):
                     "lr": f"{scheduler.get_last_lr()[0]:.2e}"
                 })
 
+        final_step = early_stop_step if early_stop else (step if steps is None else steps)
+        
+        # Final evaluation and logging if not early stopped
+        if not early_stop:
+            self.eval()
+            with torch.no_grad():
+                # Final Test Metrics
+                if test_data_fn:
+                    t_data = test_data_fn(batch_size)
+                    if len(t_data) == 3:
+                        t_inp, t_tgt, t_mask = t_data
+                        t_mask = t_mask.to(device)
+                    else:
+                        t_inp, t_tgt = t_data
+                        t_mask = None
+                    t_inp, t_tgt = t_inp.to(device), t_tgt.to(device)
+                    t_logits = self(t_inp)
+                    test_loss = F.cross_entropy(t_logits.reshape(-1, t_logits.size(-1)), t_tgt.reshape(-1), ignore_index=0, label_smoothing=label_smoothing)
+                    monitor_loss = test_loss.item()
+                    
+                    t_pred = t_logits.argmax(dim=-1)
+                    if t_mask is not None:
+                        t_correct = (t_pred == t_tgt) & t_mask
+                        monitor_acc = (t_correct.sum().float() / t_mask.sum()).item() if t_mask.sum() > 0 else 0.0
+                    else:
+                        monitor_acc = (t_pred == t_tgt).float().mean().item()
+                
+                # Final ICL Metrics
+                if icl_eval_fn:
+                    current_icl_acc = icl_eval_fn(dataset=fixed_icl_val_ds) if fixed_icl_val_ds is not None else icl_eval_fn()
+
+            # Final Log Entry
+            if log_file:
+                metric_entry = {
+                    "step": final_step,
+                    "loss": round(monitor_loss if test_data_fn else loss.item(), 4),
+                    "accuracy": round(monitor_acc if test_data_fn else accuracy.item(), 4),
+                    "icl_accuracy": round(current_icl_acc, 4),
+                    "lr": round(scheduler.get_last_lr()[0], 6)
+                }
+                if test_data_fn:
+                    metric_entry["test_loss"] = round(monitor_loss, 4)
+                    metric_entry["test_accuracy"] = round(monitor_acc, 4)
+                metrics.append(metric_entry)
         if early_stop:
-            print(f"\nEarly stopping triggered at step {early_stop_step}.")
+            print(f"\nEarly stopping triggered at step {final_step}.")
         if log_file:
             with open(log_file, "w") as f:
                 json.dump(metrics, f)
-        return self
+        return final_step

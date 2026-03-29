@@ -1,47 +1,35 @@
 import torch
-import torch.nn.functional as F
-import numpy as np
-import random
 import json
 import os
 import re
 import argparse
 import glob
-from tqdm import tqdm
+import sys
+import subprocess
 
 from src.model.tiny_transformer import TinyTransformer
 from src.configs.model_configs import config
 from src.dataset.synthetic_dataset import SyntheticICLDataset
+from src.plots.visualize import (
+    plot_training_progress, plot_icl_results, plot_emergence_results, 
+    plot_model_scaling_metrics, plot_noise_robustness, plot_ood_accuracy, plot_induction_heads,
+    parse_params
+)
 
-# --- Utility Functions ---
+from src.evaluation.metrics import (
+    calculate_edit_distance,
+    calculate_lcs, 
+    probe_induction_heads, 
+    evaluate_icl_scaling
+)
+from src.evaluation.probes import (
+    evaluate_label_flipping, 
+    evaluate_noise_robustness, 
+    evaluate_generalization, 
+    generate_analysis_summary
+)
+from src.utils import get_task_vocab
 
-def calculate_edit_distance(seq1, seq2):
-    size_x = len(seq1) + 1
-    size_y = len(seq2) + 1
-    matrix = [[0 for _ in range(size_y)] for _ in range(size_x)]
-    for x in range(size_x): matrix[x][0] = x
-    for y in range(size_y): matrix[0][y] = y
-    for x in range(1, size_x):
-        for y in range(1, size_y):
-            if seq1[x-1] == seq2[y-1]:
-                matrix[x][y] = matrix[x-1][y-1]
-            else:
-                matrix[x][y] = min(matrix[x-1][y] + 1, matrix[x-1][y-1] + 1, matrix[x][y-1] + 1)
-    return matrix[size_x-1][size_y-1]
-
-def calculate_conditional_likelihood(model, context_ids, target_ids, device):
-    if len(target_ids) == 0: return 0.0
-    full_seq = context_ids + target_ids
-    input_ids = torch.tensor([full_seq], dtype=torch.long).to(device)
-    with torch.no_grad():
-        logits = model(input_ids)
-    start_idx = max(0, len(context_ids) - 1)
-    target_len = len(target_ids)
-    selected_logits = logits[0, start_idx : start_idx + target_len, :]
-    selected_targets = input_ids[0, len(context_ids) : len(context_ids) + target_len]
-    min_len = min(len(selected_logits), len(selected_targets))
-    loss = F.cross_entropy(selected_logits[:min_len], selected_targets[:min_len], reduction='mean')
-    return torch.exp(-loss).item()
 
 # --- Core Evaluation Functions ---
 
@@ -76,7 +64,7 @@ def evaluate_model(model, dataset, task, batch_size=32, max_len=256, device='cpu
                     correct_tokens += (pred == actual).sum().item()
                     total_tokens += (end - start)
                     
-                    # Greedy generation for exact match & edit distance
+                    # Greedy generation for exact match and edit distance
                     gen_toks = padded[b_idx, :prompt_lens[b_idx]].tolist()
                     max_gen = min(20, model.max_len - len(gen_toks))
                     stop_id = stoi.get('\n', -1)
@@ -88,8 +76,7 @@ def evaluate_model(model, dataset, task, batch_size=32, max_len=256, device='cpu
                     
                     gen_answer = ''.join([itos.get(t, '') for t in gen_toks[prompt_lens[b_idx]:] if t != 0])
                     true_answer = batch[b_idx]['answer'].strip()
-                    
-                    # Extract everything up to the first newline
+                    # Universal extraction: everything up to the first newline
                     extracted_answer = gen_answer.split('\n')[0].strip()
                     
                     # Calculate edit distance on the extracted answer part
@@ -119,7 +106,7 @@ def evaluate_model(model, dataset, task, batch_size=32, max_len=256, device='cpu
 
     return results
 
-def save_raw_predictions(model, dataset, task, model_scale, device='cpu', n_samples=20):
+def save_raw_predictions(model, dataset, task, model_scale, device='cpu', n_samples=20, suffix=""):
     """Saves raw prompts and model outputs to a JSON file for manual inspection."""
     stoi, itos = model.stoi, model.itos
     model.eval()
@@ -127,11 +114,14 @@ def save_raw_predictions(model, dataset, task, model_scale, device='cpu', n_samp
     samples = dataset[:n_samples]
     predictions = []
     
-    print(f"  Logging {len(samples)} raw predictions for {model_scale}...")
+    desc = f"{model_scale} {suffix}".strip()
+    print(f"  Logging {len(samples)} raw predictions for {desc}...")
     
     with torch.no_grad():
         for item in samples:
             prompt_text = item['prompt']
+            if task == "mapping":
+                rule_family_idx = item['rule_family_idx']
             expected_answer = item['answer'].strip()
             
             p_toks = [stoi.get(c, 0) for c in prompt_text]
@@ -148,188 +138,40 @@ def save_raw_predictions(model, dataset, task, model_scale, device='cpu', n_samp
                 
             gen_text = ''.join([itos.get(t, '') for t in gen_toks[len(p_toks):] if t != 0])
             
-            # Task-specific extraction (same as evaluate_model)
-            match = re.search(r'\d+', gen_text) if task in ('addition', 'mapping') else re.search(r'[A-Z]', gen_text)
-            extracted_answer = (match.group(0) if match else gen_text.strip())
-            
-            predictions.append({
+            # Universal extraction: everything up to the first newline
+            extracted_answer = gen_text.split('\n')[0].strip()
+            prediction = {
                 "prompt": prompt_text,
                 "expected_answer": expected_answer,
                 "generated_text": gen_text,
                 "extracted_answer": extracted_answer,
-                "is_correct": extracted_answer == expected_answer
-            })
+                "is_correct": extracted_answer == expected_answer,
+            }
+            if task == "mapping":
+                prediction["rule_family_idx"] = rule_family_idx
+            predictions.append(prediction)
             
     save_dir = "results/evaluation/raw_predictions"
     os.makedirs(save_dir, exist_ok=True)
-    save_path = f"{save_dir}/{task}_{model_scale}.json"
+    filename = f"{task}_{model_scale}_{suffix}.json" if suffix else f"{task}_{model_scale}.json"
+    save_path = f"{save_dir}/{filename}"
     
     with open(save_path, "w") as f:
         json.dump(predictions, f, indent=2)
     print(f"  Raw predictions logged to {save_path}")
 
-def calculate_lcs(model, task, n_samples=250, device='cpu'):
-    """Calculates Learning-to-Context Slope (LCS)."""
-    stoi = model.stoi
-    dataset = SyntheticICLDataset(task=task, n_samples=n_samples, n_context=1)
-    s_vals, t_vals = [], []
-    nl_id = [stoi.get("\n", 0)]
-    
-    for _ in range(n_samples):
-        # Generate Q, X, D parts manually for clarity
-        if task == "addition":
-            da, db = random.randint(0, 99), random.randint(0, 99)
-            d_str = f"{da} + {db} = {da+db}"
-            qa, qb = random.randint(0, 99), random.randint(0, 99)
-            q_str, x_str = f"{qa} + {qb} = ", str(qa + qb)
-        elif task == "mapping":
-            ma, mb = random.randint(1, 10), random.randint(0, 50)
-            dx = random.randint(0, 99)
-            d_str = f"{dx} -> {dataset.mapping_fn(ma, mb, dx)}"
-            qx = random.randint(0, 99)
-            q_str, x_str = f"{qx} -> ", str(dataset.mapping_fn(ma, mb, qx))
-        else: # decoding fallback
-            motif = [random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for _ in range(5)]
-            d_str = f"{motif[0]} -> {motif[1]}" # simplified relevance
-            q_str, x_str = f"{motif[0]} -> ", motif[1]
-
-        q_ids, x_ids, d_ids = [stoi.get(c, 0) for c in q_str], [stoi.get(c, 0) for c in x_str], [stoi.get(c, 0) for c in d_str]
-        
-        p_x_q = calculate_conditional_likelihood(model, q_ids, x_ids, device)
-        p_x_qd = calculate_conditional_likelihood(model, d_ids + nl_id + q_ids, x_ids, device)
-        p_d_q = calculate_conditional_likelihood(model, q_ids, d_ids, device)
-        p_d_qx = calculate_conditional_likelihood(model, q_ids + x_ids, d_ids, device)
-        
-        s_vals.append(p_x_qd - p_x_q)
-        t_vals.append(p_d_qx - p_d_q)
-        
-    s_mean, t_mean = np.mean(s_vals), np.mean(t_vals)
-    if abs(s_mean) < 0.001: return 0.0
-    num = sum((t - t_mean)**2 for t in t_vals)
-    den = sum((t - t_mean) * (s - s_mean) for t, s in zip(t_vals, s_vals))
-    return float(den / num) if abs(num) > 1e-9 else 0.0
-
-def probe_induction_heads(model, task, device):
-    """Measures Induction Head strength across any task."""
-    stoi = model.stoi
-    # Pick valid tokens based on what the model was likely trained on
-    if task in ("addition", "mapping"):
-        valid_toks = [v for k, v in stoi.items() if re.match(r'^\d$', k)]
-    else:
-        valid_toks = [v for k, v in stoi.items() if re.match(r'^[A-Z]$', k)]
-    
-    # Fallback if task-specific regex fails
-    if len(valid_toks) < 2:
-        valid_toks = [v for k, v in stoi.items() if len(k) == 1 and k != '<pad>']
-        
-    if len(valid_toks) < 2: return 0.0
-    
-    seq_len = 20
-    trigger, target = valid_toks[0], valid_toks[1]
-    pool = [t for t in valid_toks if t not in (trigger, target)]
-    seq = [random.choice(pool) for _ in range(seq_len)]
-    
-    t_pos = random.randint(0, seq_len-5)
-    seq[t_pos], seq[t_pos+1], seq[-1] = trigger, target, trigger
-    
-    with torch.no_grad():
-        model(torch.tensor([seq]).to(device))
-        attns = model.get_attention_maps() # [L, B, H, T, T]
-    
-    scores = []
-    for layer_attn in attns:
-        # Last token (Query) attends to the token at t_pos+1 (Key/Value)
-        scores.append(layer_attn[0, :, -1, t_pos+1].cpu().numpy())
-    return float(np.max(scores)) if scores else 0.0
-
-def evaluate_label_flipping(model, task, n_samples=20, device='cpu'):
-    """
-    Evaluates if the model can follow 'flipped' labels in the context.
-    Ported from evaluate_icl_emergence.py.
-    """
-    stoi, itos = model.stoi, model.itos
-    model.eval()
-    
-    correct_flips = 0
-    predictions = []
-    
-    for _ in range(n_samples):
-        if task == "addition":
-            a, b = random.randint(0, 5), random.randint(0, 5)
-            true_ans = a + b
-            flip_ans = random.randint(0, 9)
-            while flip_ans == true_ans:
-                flip_ans = random.randint(0, 9)
-            prompt = f"{a} + {b} = {flip_ans}\n{a} + {b} = "
-            target = str(flip_ans)
-        elif task == "mapping":
-            x = random.randint(1, 10)
-            true_y = x 
-            flip_y = random.randint(0, 9)
-            while flip_y == true_y:
-                flip_y = random.randint(0, 9)
-            prompt = f"{x} -> {flip_y}\n{x} -> "
-            target = str(flip_y)
-        elif task == "decoding":
-            chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            k = random.choice(chars)
-            true_v = k 
-            flip_v = random.choice([c for c in chars if c != true_v])
-            prompt = f"{k} -> {flip_v}\n{k} -> "
-            target = flip_v
-        else:
-            continue
-
-        p_toks = [stoi.get(c, 0) for c in prompt]
-        curr = p_toks[:]
-        stop_id = stoi.get('\n', -1)
-        
-        with torch.no_grad():
-            for _ in range(10):
-                inp = torch.tensor([curr]).to(device)
-                out = model(inp)
-                nxt = out[0, -1, :].argmax().item()
-                curr.append(nxt)
-                if nxt == 0 or nxt == stop_id: break
-        
-        gen_text = ''.join([itos.get(t, '') for t in curr[len(p_toks):] if t != 0])
-        extracted = gen_text.split('\n')[0].strip()
-        
-        if extracted == target:
-            correct_flips += 1
-            
-        predictions.append({
-            "flip_prompt": prompt,
-            "flip_target": target,
-            "flip_pred": extracted
-        })
-        
-    return (correct_flips / n_samples), predictions
-
-def evaluate_icl_scaling(model, task, n_samples=100, device='cpu'):
-    """Evaluates accuracy across literal few-shot counts."""
-    results = {}
-    for n_shots in [0, 1, 3, 5]:
-        ds = SyntheticICLDataset(task=task, n_samples=n_samples, n_context=n_shots).build_dataset(return_answer=True)
-        res = evaluate_model(model, ds, task, device=device)
-        results[f"{n_shots}_shot_accuracy"] = res['exact_match_accuracy']
-        results[f"{n_shots}_shot_edit_distance"] = res['avg_edit_distance']
-    return results
 
 # --- Main Entry Point ---
 
-def run_suite(model_scale, task, device='cpu'):
+def run_suite(model_scale, task, device='cpu', step=None, 
+              digit_level=False, rule_diversity=False, 
+              mapping_ood_type='extrapolation', decoding_reversal=False,
+              hard_icl=False, exclude_family_idx=None):
     print(f"\n--- Running Evaluation Suite: {model_scale} | Task: {task} ---")
     cfg = config(model_scale)
     
     # Vocabulary setup (consistent with training)
-    dummy_ds = SyntheticICLDataset(task=task, n_samples=1000)
-    vocab_data = dummy_ds.build_dataset(return_answer=True)
-    all_text = ''.join([item['prompt'] + item['answer'] for item in vocab_data])
-    vocab = sorted(set(all_text))
-    stoi = {ch: i+1 for i, ch in enumerate(vocab)}
-    itos = {i+1: ch for i, ch in enumerate(vocab)}
-    stoi['<pad>'] = 0; itos[0] = '<pad>'
+    stoi, itos = get_task_vocab(task)
     
     model = TinyTransformer(
         vocab_size=len(stoi), dim=cfg['dim'], depth=cfg['depth'], n_heads=cfg['n_heads'],
@@ -338,31 +180,77 @@ def run_suite(model_scale, task, device='cpu'):
     ).to(device)
     
     ckpt_dir = f"checkpoints/{task}/{model_scale}/"
-    ckpts = glob.glob(f"{ckpt_dir}model-step-*.pt")
-    if not ckpts:
-        print(f"Skipping: No checkpoints in {ckpt_dir}"); return
     
-    latest_ckpt = max(ckpts, key=lambda x: int(re.search(r"model-step-(\d+)", x).group(1)))
-    model.load_state_dict(torch.load(latest_ckpt, map_location=device))
+    # Smart Checkpoint Loading
+    target_ckpt = None
+    if step:
+        target_ckpt = os.path.join(ckpt_dir, f"model-step-{step}.pt")
+    else:
+        # Check for model_best_icl.pt, then model_best.pt, then model_latest.pt, then highest step
+        options = [
+            os.path.join(ckpt_dir, "model_best_icl.pt"),
+            os.path.join(ckpt_dir, "model_best.pt"),
+            os.path.join(ckpt_dir, "model_latest.pt")
+        ]
+        for opt in options:
+            if os.path.exists(opt):
+                target_ckpt = opt
+                break
+        
+        if not target_ckpt:
+            ckpts = glob.glob(f"{ckpt_dir}model-step-*.pt")
+            if ckpts:
+                target_ckpt = max(ckpts, key=lambda x: int(re.search(r"model-step-(\d+)", x).group(1)))
+
+    if not target_ckpt or not os.path.exists(target_ckpt):
+        print(f"Skipping: No suitable checkpoint found in {ckpt_dir}"); return
     
-    # Calculate emergence metrics
-    flip_score, _ = evaluate_label_flipping(model, task, device=device)
+    print(f"Loading checkpoint: {target_ckpt}")
+    model.load_state_dict(torch.load(target_ckpt, map_location=device))
+    
+    flip_score, _ = evaluate_label_flipping(model, task, device=device, hard_icl=hard_icl)
     max_induction = probe_induction_heads(model, task, device)
-    lcs = calculate_lcs(model, task, device=device)
+    # Automatically generate induction head heatmap
+    plot_induction_heads(model, model_scale, task, device=device)
+    lcs = calculate_lcs(model, task, device=device, digit_level=digit_level)
+    noise_results = evaluate_noise_robustness(model, task, device=device, digit_level=digit_level, rule_diversity=rule_diversity, hard_icl=hard_icl)
+    generalization_results = evaluate_generalization(
+        model, task, evaluate_model, device=device,
+        digit_level=digit_level, rule_diversity=rule_diversity,
+        mapping_ood_type=mapping_ood_type, decoding_reversal=decoding_reversal,
+        hard_icl=hard_icl, exclude_family_idx=exclude_family_idx
+    )
     
     results = {
         "model_scale": model_scale,
         "task": task,
-        "checkpoint": os.path.basename(latest_ckpt),
+        "checkpoint": os.path.basename(target_ckpt),
         "lcs_score": lcs,
         "induction_score": max_induction,
-        **evaluate_icl_scaling(model, task, device=device),
-        "flip_score": flip_score
+        **evaluate_icl_scaling(model, task, evaluate_model, device=device, digit_level=digit_level, rule_diversity=rule_diversity, hard_icl=hard_icl),
+        "flip_score": flip_score,
+        **noise_results,
+        **generalization_results
     }
 
-    # Log raw predictions for manual inspection (using 5-shot samples)
-    logging_ds = SyntheticICLDataset(task=task, n_samples=20, n_context=5).build_dataset(return_answer=True)
-    save_raw_predictions(model, logging_ds, task, model_scale, device=device)
+    # --- Logging Raw Predictions ---
+    # 1. In-Distribution (ID) samples
+    logging_ds_id = SyntheticICLDataset(
+        task=task, n_samples=50, n_context=5, is_ood=False,
+        digit_level=digit_level, rule_diversity=rule_diversity,
+        mapping_ood_type=mapping_ood_type, decoding_reversal=decoding_reversal,
+        hard_icl=hard_icl, exclude_family_idx=exclude_family_idx
+    ).build_dataset(return_answer=True)
+    save_raw_predictions(model, logging_ds_id, task, model_scale, device=device, suffix="id")
+    
+    # 2. Out-of-Distribution (OOD) samples
+    logging_ds_ood = SyntheticICLDataset(
+        task=task, n_samples=50, n_context=5, is_ood=True,
+        digit_level=digit_level, rule_diversity=rule_diversity,
+        mapping_ood_type=mapping_ood_type, decoding_reversal=decoding_reversal,
+        hard_icl=hard_icl, rule_family_idx=exclude_family_idx
+    ).build_dataset(return_answer=True)
+    save_raw_predictions(model, logging_ds_ood, task, model_scale, device=device, suffix="ood")
     
     # 1. Standard Suite Results
     save_path = f"results/evaluation/suite_{task}.json"
@@ -371,6 +259,8 @@ def run_suite(model_scale, task, device='cpu'):
     if os.path.exists(save_path):
         with open(save_path, "r") as f: all_data = json.load(f)
     all_data[model_scale] = results
+    # Sort correctly by parameter count before saving
+    all_data = {k: all_data[k] for k in sorted(all_data.keys(), key=parse_params)}
     with open(save_path, "w") as f: json.dump(all_data, f, indent=2)
     
     # 2. Emergence Results (consolidated for all tasks/scales as expected by visualize.py)
@@ -385,18 +275,95 @@ def run_suite(model_scale, task, device='cpu'):
         "lcs_score": lcs,
         "max_induction_score": max_induction
     }
+    # Sort tasks and scales correctly by parameter count
+    emerg_data[task] = {k: emerg_data[task][k] for k in sorted(emerg_data[task].keys(), key=parse_params)}
     with open(emergence_path, "w") as f: json.dump(emerg_data, f, indent=2)
+    
+    # 3. Generate analysis summary
+    generate_analysis_summary(emerg_data)
     
     print(f"Results saved to {save_path}")
     for k, v in results.items(): print(f"  {k}: {v}")
+    
+    # Automatically update scaling plots
+    print("  Updating scaling plots...")
+    plot_model_scaling_metrics()
+
+    # Update consolidated noise JSON for this task with the current model's noise results
+    try:
+        noise_out = f"results/evaluation/noise_robustness_{task}.json"
+        consolidated = {}
+        if os.path.exists(noise_out):
+            with open(noise_out, 'r') as f:
+                try: consolidated = json.load(f)
+                except: consolidated = {}
+
+        # noise_results contains keys like 'noise_0.0_accuracy'
+        if isinstance(noise_results, dict) and noise_results:
+            model_map = {}
+            for k, v in noise_results.items():
+                m = re.search(r'noise_([0-9.]+)', k)
+                if m:
+                    model_map[m.group(1)] = v
+                else:
+                    try:
+                        model_map[str(float(k))] = v
+                    except Exception:
+                        continue
+
+            if model_map:
+                consolidated[model_scale] = {kk: model_map[kk] for kk in sorted(model_map.keys(), key=lambda x: float(x))}
+                # Sort consolidated by model scale correctly
+                consolidated = {k: consolidated[k] for k in sorted(consolidated.keys(), key=parse_params)}
+                os.makedirs(os.path.dirname(noise_out), exist_ok=True)
+                with open(noise_out, 'w') as f:
+                    json.dump(consolidated, f, indent=2)
+                print(f"  Updated noise JSON: {noise_out}")
+    except Exception as e:
+        print(f"  Warning: failed to update noise JSON for {task}/{model_scale}: {e}")
+
+    # Generate noise robustness plot for this task (safe to call repeatedly)
+    try:
+        print("\nGenerating plots...")
+        plot_training_progress()
+        plot_icl_results()
+        plot_emergence_results()
+        plot_model_scaling_metrics()
+        plot_noise_robustness()
+        plot_ood_accuracy()
+    except Exception as e:
+        print(f"  Warning: failed to generate plots: {e}")
 
 if __name__ == "__main__":
+    # Automatically switch to venv if not already inside it
+    if not sys.prefix.endswith('.venv'):
+        venv_exe = os.path.join(os.getcwd(), '.venv', 'Scripts', 'python.exe') if os.name == 'nt' else os.path.join(os.getcwd(), '.venv', 'bin', 'python')
+        if os.path.exists(venv_exe):
+            print(f"  --> Redirecting to Virtual Environment: {venv_exe}")
+            os.environ['PYTHONPATH'] = os.getcwd()
+            subprocess.run([venv_exe] + sys.argv)
+            sys.exit(0)
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--configs", nargs="+", default=['tt-8k', 'tt-26k', 'tt-150k'])
-    parser.add_argument("--tasks", nargs="+", default=['addition', 'mapping', 'decoding'])
+    parser.add_argument("--tasks", nargs="+", default=['addition', 'arithmetic_symbolic', 'mapping', 'decoding'])
+    parser.add_argument("--step", type=int, default=None, help="Evaluate a specific step.")
+    
+    # Generalization-V2 Flags
+    parser.add_argument("--digit_level", action="store_true", help="Use digit-level formatting for addition.")
+    parser.add_argument("--rule_diversity", action="store_true", help="Enable rule diversity for mapping.")
+    parser.add_argument("--mapping_ood_type", type=str, choices=['exponential', 'extrapolation', 'modulo'], default='extrapolation', help="OOD type for mapping.")
+    parser.add_argument("--decoding_reversal", action="store_true", help="Enable soft reversal for decoding OOD.")
+    parser.add_argument("--hard_icl", action="store_true", help="Enable strict ICL mode with symbolic ops and jitter.")
+    
     args = parser.parse_args()
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     for task in args.tasks:
         for cfg in args.configs:
-            run_suite(cfg, task, device)
+            run_suite(
+                cfg, task, device, step=args.step,
+                digit_level=args.digit_level, rule_diversity=args.rule_diversity,
+                mapping_ood_type=args.mapping_ood_type, decoding_reversal=args.decoding_reversal,
+                hard_icl=args.hard_icl
+            )

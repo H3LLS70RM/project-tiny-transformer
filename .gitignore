@@ -3,3 +3,9 @@ checkpoint*/
 __pycache__/
 *.pyc
 result*/
+*.tex
+find_configs.py
+count_params.py
+balanced_configs_output.txt
+scripts/find_*.py
+guidelines.md

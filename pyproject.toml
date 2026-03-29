@@ -1,0 +1,15 @@
+[project]
+name = "tiny_transformer"
+version = "0.1.0"
+description = "Exploring In-Context Learning and algorithmic reasoning in small-scale Transformer models."
+dependencies = [
+    "torch",
+    "tqdm",
+    "matplotlib",
+    "numpy",
+    "seaborn",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

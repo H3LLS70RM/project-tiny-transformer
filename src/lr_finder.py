@@ -133,7 +133,7 @@ class LRFinder:
             suggested_lr = lrs[steepest_idx]
         else:
             suggested_lr = lrs[0] if lrs else start_lr
-
+            
         print(f"Suggested learning rate: {suggested_lr:.2e}")
         return suggested_lr, self.history
         
@@ -170,4 +170,7 @@ class LRFinder:
             
         if show:
             plt.show()
+
+        # Close the figure to free up memory and prevent the "Too many figures" warning
+        plt.close()
 
